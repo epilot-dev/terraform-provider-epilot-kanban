@@ -28,4 +28,7 @@ actions:
       x-speakeasy-entity-operation: Kanban#update
   - target: $["paths"]["/v1/kanban/board/{id}"]["delete"]
     update:
+      x-speakeasy-entity-operation: Kanban#delete
+  - target: $["components"]["schemas"]["Kanban"]
+    update:
       x-speakeasy-entity: Kanban
