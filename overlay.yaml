@@ -16,7 +16,7 @@ actions:
           - 5XX
         retryConnectionErrors: true
 
-  # Dashboard
+  # Kanban
   - target: $["paths"]["/v1/kanban/board"]["post"]
     update:
       x-speakeasy-entity-operation: Kanban#create

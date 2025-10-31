@@ -13,7 +13,7 @@ Terraform Provider for the *epilot-kanban* API.
 <!-- Start Summary [summary] -->
 ## Summary
 
-Kanban API: API to store the kanban configuration for the epilot 360 Kanban boards
+
 <!-- End Summary [summary] -->
 
 <!-- Start Table of Contents [toc] -->
@@ -21,6 +21,7 @@ Kanban API: API to store the kanban configuration for the epilot 360 Kanban boar
 <!-- $toc-max-depth=2 -->
 * [epilot-kanban](#epilot-kanban)
   * [Installation](#installation)
+  * [Authentication](#authentication)
   * [Available Resources and Data Sources](#available-resources-and-data-sources)
   * [Testing the provider locally](#testing-the-provider-locally)
 * [Development](#development)
@@ -38,7 +39,7 @@ terraform {
   required_providers {
     epilot-kanban = {
       source  = "epilot-dev/epilot-kanban"
-      version = "0.15.2"
+      version = "0.16.5"
     }
   }
 }
@@ -49,6 +50,19 @@ provider "epilot-kanban" {
 ```
 <!-- End Installation [installation] -->
 
+<!-- Start Authentication [security] -->
+## Authentication
+
+This provider supports authentication configuration via provider configuration.
+
+Available configuration:
+
+| Provider Attribute | Description |
+|---|---|
+| `epilot_auth` | Authorization header with epilot OAuth2 bearer token. |
+| `epilot_org` | Overrides the target organization to allow shared tenantaccess. |
+<!-- End Authentication [security] -->
+
 <!-- Start Available Resources and Data Sources [operations] -->
 ## Available Resources and Data Sources
 
@@ -56,8 +70,6 @@ provider "epilot-kanban" {
 
 * [epilot-kanban_kanban](docs/resources/kanban.md)
 ### Data Sources
-
-* [epilot-kanban_kanban](docs/data-sources/kanban.md)
 <!-- End Available Resources and Data Sources [operations] -->
 
 <!-- Start Testing the provider locally [usage] -->
