@@ -1,0 +1,34 @@
+overlay: 1.0.0
+info:
+  title: Speakeasy overlay for epilot Kanban API
+  version: 0.0.1
+actions:
+  - target: $
+    update:
+      x-speakeasy-retries:
+        strategy: backoff
+        backoff:
+          initialInterval: 5000 # 5 seconds
+          maxInterval: 60000 # 60 seconds
+          maxElapsedTime: 3600000 # 5 minutes
+          exponent: 1.5
+        statusCodes:
+          - 5XX
+        retryConnectionErrors: true
+
+  # Dashboard
+  - target: $["paths"]["/v1/kanban/board"]["post"]
+    update:
+      x-speakeasy-entity-operation: Kanban#create
+  - target: $["paths"]["/v1/kanban/board/{id}"]["get"]
+    update:
+      x-speakeasy-entity-operation: Kanban#get
+  - target: $["paths"]["/v1/kanban/board/{id}"]["patch"]
+    update:
+      x-speakeasy-entity-operation: Kanban#update
+  - target: $["paths"]["/v1/kanban/board/{id}"]["delete"]
+    update:
+      x-speakeasy-entity-operation: Kanban#delete
+  - target: $["components"]["schemas"]["Kanban"]
+    update:
+      x-speakeasy-entity: Kanban
