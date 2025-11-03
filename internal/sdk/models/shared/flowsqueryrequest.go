@@ -24,30 +24,30 @@ func (f *FlowsQueryRequest) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (f *FlowsQueryRequest) GetFilters() *BoardFilter {
-	if f == nil {
+func (o *FlowsQueryRequest) GetFilters() *BoardFilter {
+	if o == nil {
 		return nil
 	}
-	return f.Filters
+	return o.Filters
 }
 
-func (f *FlowsQueryRequest) GetFrom() *float64 {
-	if f == nil {
+func (o *FlowsQueryRequest) GetFrom() *float64 {
+	if o == nil {
 		return nil
 	}
-	return f.From
+	return o.From
 }
 
-func (f *FlowsQueryRequest) GetSize() *float64 {
-	if f == nil {
+func (o *FlowsQueryRequest) GetSize() *float64 {
+	if o == nil {
 		return nil
 	}
-	return f.Size
+	return o.Size
 }
 
-func (f *FlowsQueryRequest) GetSorting() *Sorting {
-	if f == nil {
+func (o *FlowsQueryRequest) GetSorting() *Sorting {
+	if o == nil {
 		return nil
 	}
-	return f.Sorting
+	return o.Sorting
 }

@@ -52,32 +52,6 @@ func (r *KanbanResourceModel) RefreshFromSharedBoard(ctx context.Context, resp *
 							if itemsItem1.Value.Boolean != nil {
 								items1.Value.Boolean = types.BoolPointerValue(itemsItem1.Value.Boolean)
 							}
-							if itemsItem1.Value.ArrayOfFive != nil {
-								items1.Value.ArrayOfFive = []tfTypes.Five{}
-
-								for _, arrayOfFiveItem := range itemsItem1.Value.ArrayOfFive {
-									var arrayOfFive tfTypes.Five
-
-									if arrayOfFiveItem.Str != nil {
-										arrayOfFive.Str = types.StringPointerValue(arrayOfFiveItem.Str)
-									}
-									if arrayOfFiveItem.Number != nil {
-										arrayOfFive.Number = types.Float64PointerValue(arrayOfFiveItem.Number)
-									}
-									if arrayOfFiveItem.Boolean != nil {
-										arrayOfFive.Boolean = types.BoolPointerValue(arrayOfFiveItem.Boolean)
-									}
-									if arrayOfFiveItem.DynamicDateValue != nil {
-										if arrayOfFiveItem.DynamicDateValue != nil {
-											arrayOfFive.DynamicDateValue = types.StringValue(string(*arrayOfFiveItem.DynamicDateValue))
-										} else {
-											arrayOfFive.DynamicDateValue = types.StringNull()
-										}
-									}
-
-									items1.Value.ArrayOfFive = append(items1.Value.ArrayOfFive, arrayOfFive)
-								}
-							}
 							if itemsItem1.Value.DynamicDateValue != nil {
 								if itemsItem1.Value.DynamicDateValue != nil {
 									items1.Value.DynamicDateValue = types.StringValue(string(*itemsItem1.Value.DynamicDateValue))
@@ -109,32 +83,6 @@ func (r *KanbanResourceModel) RefreshFromSharedBoard(ctx context.Context, resp *
 						}
 						if itemsItem.FilterItem.Value.Boolean != nil {
 							items.FilterItem.Value.Boolean = types.BoolPointerValue(itemsItem.FilterItem.Value.Boolean)
-						}
-						if itemsItem.FilterItem.Value.ArrayOfFive != nil {
-							items.FilterItem.Value.ArrayOfFive = []tfTypes.Five{}
-
-							for _, arrayOfFiveItem1 := range itemsItem.FilterItem.Value.ArrayOfFive {
-								var arrayOfFive1 tfTypes.Five
-
-								if arrayOfFiveItem1.Str != nil {
-									arrayOfFive1.Str = types.StringPointerValue(arrayOfFiveItem1.Str)
-								}
-								if arrayOfFiveItem1.Number != nil {
-									arrayOfFive1.Number = types.Float64PointerValue(arrayOfFiveItem1.Number)
-								}
-								if arrayOfFiveItem1.Boolean != nil {
-									arrayOfFive1.Boolean = types.BoolPointerValue(arrayOfFiveItem1.Boolean)
-								}
-								if arrayOfFiveItem1.DynamicDateValue != nil {
-									if arrayOfFiveItem1.DynamicDateValue != nil {
-										arrayOfFive1.DynamicDateValue = types.StringValue(string(*arrayOfFiveItem1.DynamicDateValue))
-									} else {
-										arrayOfFive1.DynamicDateValue = types.StringNull()
-									}
-								}
-
-								items.FilterItem.Value.ArrayOfFive = append(items.FilterItem.Value.ArrayOfFive, arrayOfFive1)
-							}
 						}
 						if itemsItem.FilterItem.Value.DynamicDateValue != nil {
 							if itemsItem.FilterItem.Value.DynamicDateValue != nil {
@@ -212,32 +160,6 @@ func (r *KanbanResourceModel) RefreshFromSharedBoard(ctx context.Context, resp *
 								if itemsItem3.Value.Boolean != nil {
 									items3.Value.Boolean = types.BoolPointerValue(itemsItem3.Value.Boolean)
 								}
-								if itemsItem3.Value.ArrayOfFive != nil {
-									items3.Value.ArrayOfFive = []tfTypes.Five{}
-
-									for _, arrayOfFiveItem2 := range itemsItem3.Value.ArrayOfFive {
-										var arrayOfFive2 tfTypes.Five
-
-										if arrayOfFiveItem2.Str != nil {
-											arrayOfFive2.Str = types.StringPointerValue(arrayOfFiveItem2.Str)
-										}
-										if arrayOfFiveItem2.Number != nil {
-											arrayOfFive2.Number = types.Float64PointerValue(arrayOfFiveItem2.Number)
-										}
-										if arrayOfFiveItem2.Boolean != nil {
-											arrayOfFive2.Boolean = types.BoolPointerValue(arrayOfFiveItem2.Boolean)
-										}
-										if arrayOfFiveItem2.DynamicDateValue != nil {
-											if arrayOfFiveItem2.DynamicDateValue != nil {
-												arrayOfFive2.DynamicDateValue = types.StringValue(string(*arrayOfFiveItem2.DynamicDateValue))
-											} else {
-												arrayOfFive2.DynamicDateValue = types.StringNull()
-											}
-										}
-
-										items3.Value.ArrayOfFive = append(items3.Value.ArrayOfFive, arrayOfFive2)
-									}
-								}
 								if itemsItem3.Value.DynamicDateValue != nil {
 									if itemsItem3.Value.DynamicDateValue != nil {
 										items3.Value.DynamicDateValue = types.StringValue(string(*itemsItem3.Value.DynamicDateValue))
@@ -269,32 +191,6 @@ func (r *KanbanResourceModel) RefreshFromSharedBoard(ctx context.Context, resp *
 							}
 							if itemsItem2.FilterItem.Value.Boolean != nil {
 								items2.FilterItem.Value.Boolean = types.BoolPointerValue(itemsItem2.FilterItem.Value.Boolean)
-							}
-							if itemsItem2.FilterItem.Value.ArrayOfFive != nil {
-								items2.FilterItem.Value.ArrayOfFive = []tfTypes.Five{}
-
-								for _, arrayOfFiveItem3 := range itemsItem2.FilterItem.Value.ArrayOfFive {
-									var arrayOfFive3 tfTypes.Five
-
-									if arrayOfFiveItem3.Str != nil {
-										arrayOfFive3.Str = types.StringPointerValue(arrayOfFiveItem3.Str)
-									}
-									if arrayOfFiveItem3.Number != nil {
-										arrayOfFive3.Number = types.Float64PointerValue(arrayOfFiveItem3.Number)
-									}
-									if arrayOfFiveItem3.Boolean != nil {
-										arrayOfFive3.Boolean = types.BoolPointerValue(arrayOfFiveItem3.Boolean)
-									}
-									if arrayOfFiveItem3.DynamicDateValue != nil {
-										if arrayOfFiveItem3.DynamicDateValue != nil {
-											arrayOfFive3.DynamicDateValue = types.StringValue(string(*arrayOfFiveItem3.DynamicDateValue))
-										} else {
-											arrayOfFive3.DynamicDateValue = types.StringNull()
-										}
-									}
-
-									items2.FilterItem.Value.ArrayOfFive = append(items2.FilterItem.Value.ArrayOfFive, arrayOfFive3)
-								}
 							}
 							if itemsItem2.FilterItem.Value.DynamicDateValue != nil {
 								if itemsItem2.FilterItem.Value.DynamicDateValue != nil {
@@ -435,11 +331,6 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 							}
 						}
 					}
-					if arrayOfFive != nil {
-						value = &shared.ValueType{
-							ArrayOfFive: arrayOfFive,
-						}
-					}
 				}
 				filterItem := shared.FilterItem{
 					DataType: dataType,
@@ -509,47 +400,6 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 						if boolean2 != nil {
 							value1 = &shared.ValueType{
 								Boolean: boolean2,
-							}
-						}
-						var arrayOfFive1 []shared.Five
-						if itemsItem1.Value.ArrayOfFive != nil {
-							arrayOfFive1 = make([]shared.Five, 0, len(itemsItem1.Value.ArrayOfFive))
-							for _, arrayOfFiveItem1 := range itemsItem1.Value.ArrayOfFive {
-								if !arrayOfFiveItem1.Str.IsUnknown() && !arrayOfFiveItem1.Str.IsNull() {
-									var str3 string
-									str3 = arrayOfFiveItem1.Str.ValueString()
-
-									arrayOfFive1 = append(arrayOfFive1, shared.Five{
-										Str: &str3,
-									})
-								}
-								if !arrayOfFiveItem1.DynamicDateValue.IsUnknown() && !arrayOfFiveItem1.DynamicDateValue.IsNull() {
-									dynamicDateValue3 := shared.DynamicDateValue(arrayOfFiveItem1.DynamicDateValue.ValueString())
-									arrayOfFive1 = append(arrayOfFive1, shared.Five{
-										DynamicDateValue: &dynamicDateValue3,
-									})
-								}
-								if !arrayOfFiveItem1.Number.IsUnknown() && !arrayOfFiveItem1.Number.IsNull() {
-									var number3 float64
-									number3 = arrayOfFiveItem1.Number.ValueFloat64()
-
-									arrayOfFive1 = append(arrayOfFive1, shared.Five{
-										Number: &number3,
-									})
-								}
-								if !arrayOfFiveItem1.Boolean.IsUnknown() && !arrayOfFiveItem1.Boolean.IsNull() {
-									var boolean3 bool
-									boolean3 = arrayOfFiveItem1.Boolean.ValueBool()
-
-									arrayOfFive1 = append(arrayOfFive1, shared.Five{
-										Boolean: &boolean3,
-									})
-								}
-							}
-						}
-						if arrayOfFive1 != nil {
-							value1 = &shared.ValueType{
-								ArrayOfFive: arrayOfFive1,
 							}
 						}
 					}
@@ -712,11 +562,6 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 								}
 							}
 						}
-						if arrayOfFive2 != nil {
-							value2 = &shared.ValueType{
-								ArrayOfFive: arrayOfFive2,
-							}
-						}
 					}
 					filterItem1 := shared.FilterItem{
 						DataType: dataType2,
@@ -822,11 +667,6 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 											Boolean: &boolean7,
 										})
 									}
-								}
-							}
-							if arrayOfFive3 != nil {
-								value3 = &shared.ValueType{
-									ArrayOfFive: arrayOfFive3,
 								}
 							}
 						}

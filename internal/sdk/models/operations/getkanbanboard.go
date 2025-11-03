@@ -11,11 +11,11 @@ type GetKanbanBoardRequest struct {
 	BoardID string `pathParam:"style=simple,explode=false,name=boardId"`
 }
 
-func (g *GetKanbanBoardRequest) GetBoardID() string {
-	if g == nil {
+func (o *GetKanbanBoardRequest) GetBoardID() string {
+	if o == nil {
 		return ""
 	}
-	return g.BoardID
+	return o.BoardID
 }
 
 type GetKanbanBoardResponse struct {
@@ -29,30 +29,30 @@ type GetKanbanBoardResponse struct {
 	RawResponse *http.Response
 }
 
-func (g *GetKanbanBoardResponse) GetBoard() *shared.Board {
-	if g == nil {
+func (o *GetKanbanBoardResponse) GetBoard() *shared.Board {
+	if o == nil {
 		return nil
 	}
-	return g.Board
+	return o.Board
 }
 
-func (g *GetKanbanBoardResponse) GetContentType() string {
-	if g == nil {
+func (o *GetKanbanBoardResponse) GetContentType() string {
+	if o == nil {
 		return ""
 	}
-	return g.ContentType
+	return o.ContentType
 }
 
-func (g *GetKanbanBoardResponse) GetStatusCode() int {
-	if g == nil {
+func (o *GetKanbanBoardResponse) GetStatusCode() int {
+	if o == nil {
 		return 0
 	}
-	return g.StatusCode
+	return o.StatusCode
 }
 
-func (g *GetKanbanBoardResponse) GetRawResponse() *http.Response {
-	if g == nil {
+func (o *GetKanbanBoardResponse) GetRawResponse() *http.Response {
+	if o == nil {
 		return nil
 	}
-	return g.RawResponse
+	return o.RawResponse
 }

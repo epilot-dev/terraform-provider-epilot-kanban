@@ -64,7 +64,7 @@ func (s *Kanban) CreateKanbanBoard(ctx context.Context, request *shared.Board, o
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "createKanbanBoard",
-		OAuth2Scopes:     nil,
+		OAuth2Scopes:     []string{},
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, true, "Request", "json", `request:"mediaType=application/json"`)
@@ -276,7 +276,7 @@ func (s *Kanban) DeleteKanbanBoard(ctx context.Context, request operations.Delet
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "deleteKanbanBoard",
-		OAuth2Scopes:     nil,
+		OAuth2Scopes:     []string{},
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -461,7 +461,7 @@ func (s *Kanban) GetKanbanBoard(ctx context.Context, request operations.GetKanba
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getKanbanBoard",
-		OAuth2Scopes:     nil,
+		OAuth2Scopes:     []string{},
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -666,7 +666,7 @@ func (s *Kanban) GetKanbanBoards(ctx context.Context, request operations.GetKanb
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "getKanbanBoards",
-		OAuth2Scopes:     nil,
+		OAuth2Scopes:     []string{},
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 
@@ -873,7 +873,7 @@ func (s *Kanban) PatchKanbanBoard(ctx context.Context, request operations.PatchK
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "patchKanbanBoard",
-		OAuth2Scopes:     nil,
+		OAuth2Scopes:     []string{},
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, true, "RequestBody", "json", `request:"mediaType=application/json"`)
@@ -1087,7 +1087,7 @@ func (s *Kanban) UpdateKanbanBoard(ctx context.Context, request operations.Updat
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "updateKanbanBoard",
-		OAuth2Scopes:     nil,
+		OAuth2Scopes:     []string{},
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, true, "Board", "json", `request:"mediaType=application/json"`)

@@ -18,30 +18,30 @@ type CreateKanbanBoardResponse struct {
 	RawResponse *http.Response
 }
 
-func (c *CreateKanbanBoardResponse) GetBoard() *shared.Board {
-	if c == nil {
+func (o *CreateKanbanBoardResponse) GetBoard() *shared.Board {
+	if o == nil {
 		return nil
 	}
-	return c.Board
+	return o.Board
 }
 
-func (c *CreateKanbanBoardResponse) GetContentType() string {
-	if c == nil {
+func (o *CreateKanbanBoardResponse) GetContentType() string {
+	if o == nil {
 		return ""
 	}
-	return c.ContentType
+	return o.ContentType
 }
 
-func (c *CreateKanbanBoardResponse) GetStatusCode() int {
-	if c == nil {
+func (o *CreateKanbanBoardResponse) GetStatusCode() int {
+	if o == nil {
 		return 0
 	}
-	return c.StatusCode
+	return o.StatusCode
 }
 
-func (c *CreateKanbanBoardResponse) GetRawResponse() *http.Response {
-	if c == nil {
+func (o *CreateKanbanBoardResponse) GetRawResponse() *http.Response {
+	if o == nil {
 		return nil
 	}
-	return c.RawResponse
+	return o.RawResponse
 }

@@ -14,9 +14,70 @@ Kanban Resource
 
 ```terraform
 resource "epilot-kanban_kanban" "my_kanban" {
-  id    = "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-  tiles = "{ \"see\": \"documentation\" }"
-  title = "Employee kanban"
+  config = {
+    board_filter = {
+      combination = "OR"
+      items = [
+        {
+          filter_item = {
+            data_type = "string"
+            key       = "assignee"
+            operator  = "EQUALS"
+            value = {
+              number = 42
+            }
+          }
+        }
+      ]
+    }
+    card_config = {
+      fields = [
+        "assignee"
+      ]
+    }
+    dataset      = "workflow_tasks_overview"
+    search_query = "task 1"
+    sorting = {
+      direction = "desc"
+      field     = "created_at"
+    }
+    swimlanes = [
+      {
+        filter = {
+          combination = "OR"
+          items = [
+            {
+              filter_item = {
+                data_type = "string"
+                key       = "assignee"
+                operator  = "EQUALS"
+                value = {
+                  dynamic_date_value = "LAST_MONTH"
+                  str                = "100020"
+                }
+              }
+            }
+          ]
+        }
+        id                 = "...my_id..."
+        position           = 1
+        title              = "Swimlane 1"
+        title_chip_variant = "success"
+      }
+    ]
+  }
+  created_at  = "2020-03-27T09:46:32.850Z"
+  created_by  = "...my_created_by..."
+  description = "Board description"
+  id          = "...my_id..."
+  org_id      = "...my_org_id..."
+  shared_with = [
+    "..."
+  ]
+  shared_with_org = true
+  title           = "Board 1"
+  updated_at      = "2022-04-27T23:54:50.061Z"
+  updated_by      = "...my_updated_by..."
 }
 ```
 
@@ -25,17 +86,242 @@ resource "epilot-kanban_kanban" "my_kanban" {
 
 ### Required
 
-- `tiles` (String) Parsed as JSON.
-- `title` (String)
+- `config` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--config))
+- `title` (String) Requires replacement if changed.
 
 ### Optional
 
-- `id` (String) Unique identifier for kanban
+- `created_at` (String) Requires replacement if changed.
+- `created_by` (String) Requires replacement if changed.
+- `description` (String) Requires replacement if changed.
+- `id` (String) Requires replacement if changed.
+- `org_id` (String) Requires replacement if changed.
+- `shared_with` (List of String) Requires replacement if changed.
+- `shared_with_org` (Boolean) Requires replacement if changed.
+- `updated_at` (String) Requires replacement if changed.
+- `updated_by` (String) Requires replacement if changed.
 
-## Import
+<a id="nestedatt--config"></a>
+### Nested Schema for `config`
 
-Import is supported using the following syntax:
+Optional:
 
-```shell
-terraform import epilot-kanban_kanban.my_epilot-kanban_kanban "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-```
+- `board_filter` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter))
+- `card_config` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--card_config))
+- `dataset` (String) Requires replacement if changed.
+- `search_query` (String) Requires replacement if changed.
+- `sorting` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--sorting))
+- `swimlanes` (Attributes List) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes))
+
+<a id="nestedatt--config--board_filter"></a>
+### Nested Schema for `config.board_filter`
+
+Optional:
+
+- `combination` (String) Not Null; must be one of ["AND", "OR"]; Requires replacement if changed.
+- `items` (Attributes List) Not Null; Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter--items))
+
+<a id="nestedatt--config--board_filter--items"></a>
+### Nested Schema for `config.board_filter.items`
+
+Optional:
+
+- `filter_group` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter--items--filter_group))
+- `filter_item` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter--items--filter_item))
+
+<a id="nestedatt--config--board_filter--items--filter_group"></a>
+### Nested Schema for `config.board_filter.items.filter_group`
+
+Optional:
+
+- `combination` (String) Not Null; must be one of ["AND", "OR"]; Requires replacement if changed.
+- `items` (Attributes List) Not Null; Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter--items--filter_group--items))
+
+<a id="nestedatt--config--board_filter--items--filter_group--items"></a>
+### Nested Schema for `config.board_filter.items.filter_group.items`
+
+Optional:
+
+- `data_type` (String) The data type of the field. must be one of ["string", "number", "boolean", "date"]; Requires replacement if changed.
+- `key` (String) The field key to filter on. Not Null; Requires replacement if changed.
+- `operator` (String) The comparison operator for filtering. Not Null; must be one of ["EQUALS", "NOT_EQUALS", "EMPTY", "NOT_EMPTY", "CONTAINS", "NOT_CONTAINS", "IS_ONE_OF", "IS_NONE_OF", "GREATER_THAN", "LESS_THAN", "GREATER_THAN_OR_EQUAL", "LESS_THAN_OR_EQUAL"]; Requires replacement if changed.
+- `value` (Attributes) The value to compare against - can be a single value (string, number, boolean, or dynamic date) or an array of values. Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter--items--filter_group--items--value))
+
+<a id="nestedatt--config--board_filter--items--filter_group--items--value"></a>
+### Nested Schema for `config.board_filter.items.filter_group.items.value`
+
+Optional:
+
+- `array_of_five` (Attributes List) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter--items--filter_group--items--value--array_of_five))
+- `boolean` (Boolean) Requires replacement if changed.
+- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
+- `number` (Number) Requires replacement if changed.
+- `str` (String) Requires replacement if changed.
+
+<a id="nestedatt--config--board_filter--items--filter_group--items--value--array_of_five"></a>
+### Nested Schema for `config.board_filter.items.filter_group.items.value.array_of_five`
+
+Optional:
+
+- `boolean` (Boolean) Requires replacement if changed.
+- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
+- `number` (Number) Requires replacement if changed.
+- `str` (String) Requires replacement if changed.
+
+
+
+
+
+<a id="nestedatt--config--board_filter--items--filter_item"></a>
+### Nested Schema for `config.board_filter.items.filter_item`
+
+Optional:
+
+- `data_type` (String) The data type of the field. must be one of ["string", "number", "boolean", "date"]; Requires replacement if changed.
+- `key` (String) The field key to filter on. Not Null; Requires replacement if changed.
+- `operator` (String) The comparison operator for filtering. Not Null; must be one of ["EQUALS", "NOT_EQUALS", "EMPTY", "NOT_EMPTY", "CONTAINS", "NOT_CONTAINS", "IS_ONE_OF", "IS_NONE_OF", "GREATER_THAN", "LESS_THAN", "GREATER_THAN_OR_EQUAL", "LESS_THAN_OR_EQUAL"]; Requires replacement if changed.
+- `value` (Attributes) The value to compare against - can be a single value (string, number, boolean, or dynamic date) or an array of values. Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter--items--filter_item--value))
+
+<a id="nestedatt--config--board_filter--items--filter_item--value"></a>
+### Nested Schema for `config.board_filter.items.filter_item.value`
+
+Optional:
+
+- `array_of_five` (Attributes List) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter--items--filter_item--value--array_of_five))
+- `boolean` (Boolean) Requires replacement if changed.
+- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
+- `number` (Number) Requires replacement if changed.
+- `str` (String) Requires replacement if changed.
+
+<a id="nestedatt--config--board_filter--items--filter_item--value--array_of_five"></a>
+### Nested Schema for `config.board_filter.items.filter_item.value.array_of_five`
+
+Optional:
+
+- `boolean` (Boolean) Requires replacement if changed.
+- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
+- `number` (Number) Requires replacement if changed.
+- `str` (String) Requires replacement if changed.
+
+
+
+
+
+
+<a id="nestedatt--config--card_config"></a>
+### Nested Schema for `config.card_config`
+
+Optional:
+
+- `fields` (List of String) Requires replacement if changed.
+
+
+<a id="nestedatt--config--sorting"></a>
+### Nested Schema for `config.sorting`
+
+Optional:
+
+- `direction` (String) Default: "asc"; must be one of ["asc", "desc"]; Requires replacement if changed.
+- `field` (String) Not Null; Requires replacement if changed.
+
+
+<a id="nestedatt--config--swimlanes"></a>
+### Nested Schema for `config.swimlanes`
+
+Optional:
+
+- `filter` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter))
+- `id` (String) Requires replacement if changed.
+- `position` (Number) Requires replacement if changed.
+- `title` (String) Requires replacement if changed.
+- `title_chip_variant` (String) Requires replacement if changed.
+
+<a id="nestedatt--config--swimlanes--filter"></a>
+### Nested Schema for `config.swimlanes.filter`
+
+Optional:
+
+- `combination` (String) Not Null; must be one of ["AND", "OR"]; Requires replacement if changed.
+- `items` (Attributes List) Not Null; Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter--items))
+
+<a id="nestedatt--config--swimlanes--filter--items"></a>
+### Nested Schema for `config.swimlanes.filter.items`
+
+Optional:
+
+- `filter_group` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter--items--filter_group))
+- `filter_item` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter--items--filter_item))
+
+<a id="nestedatt--config--swimlanes--filter--items--filter_group"></a>
+### Nested Schema for `config.swimlanes.filter.items.filter_group`
+
+Optional:
+
+- `combination` (String) Not Null; must be one of ["AND", "OR"]; Requires replacement if changed.
+- `items` (Attributes List) Not Null; Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter--items--filter_group--items))
+
+<a id="nestedatt--config--swimlanes--filter--items--filter_group--items"></a>
+### Nested Schema for `config.swimlanes.filter.items.filter_group.items`
+
+Optional:
+
+- `data_type` (String) The data type of the field. must be one of ["string", "number", "boolean", "date"]; Requires replacement if changed.
+- `key` (String) The field key to filter on. Not Null; Requires replacement if changed.
+- `operator` (String) The comparison operator for filtering. Not Null; must be one of ["EQUALS", "NOT_EQUALS", "EMPTY", "NOT_EMPTY", "CONTAINS", "NOT_CONTAINS", "IS_ONE_OF", "IS_NONE_OF", "GREATER_THAN", "LESS_THAN", "GREATER_THAN_OR_EQUAL", "LESS_THAN_OR_EQUAL"]; Requires replacement if changed.
+- `value` (Attributes) The value to compare against - can be a single value (string, number, boolean, or dynamic date) or an array of values. Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter--items--filter_group--items--value))
+
+<a id="nestedatt--config--swimlanes--filter--items--filter_group--items--value"></a>
+### Nested Schema for `config.swimlanes.filter.items.filter_group.items.value`
+
+Optional:
+
+- `array_of_five` (Attributes List) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter--items--filter_group--items--value--array_of_five))
+- `boolean` (Boolean) Requires replacement if changed.
+- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
+- `number` (Number) Requires replacement if changed.
+- `str` (String) Requires replacement if changed.
+
+<a id="nestedatt--config--swimlanes--filter--items--filter_group--items--value--array_of_five"></a>
+### Nested Schema for `config.swimlanes.filter.items.filter_group.items.value.array_of_five`
+
+Optional:
+
+- `boolean` (Boolean) Requires replacement if changed.
+- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
+- `number` (Number) Requires replacement if changed.
+- `str` (String) Requires replacement if changed.
+
+
+
+
+
+<a id="nestedatt--config--swimlanes--filter--items--filter_item"></a>
+### Nested Schema for `config.swimlanes.filter.items.filter_item`
+
+Optional:
+
+- `data_type` (String) The data type of the field. must be one of ["string", "number", "boolean", "date"]; Requires replacement if changed.
+- `key` (String) The field key to filter on. Not Null; Requires replacement if changed.
+- `operator` (String) The comparison operator for filtering. Not Null; must be one of ["EQUALS", "NOT_EQUALS", "EMPTY", "NOT_EMPTY", "CONTAINS", "NOT_CONTAINS", "IS_ONE_OF", "IS_NONE_OF", "GREATER_THAN", "LESS_THAN", "GREATER_THAN_OR_EQUAL", "LESS_THAN_OR_EQUAL"]; Requires replacement if changed.
+- `value` (Attributes) The value to compare against - can be a single value (string, number, boolean, or dynamic date) or an array of values. Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter--items--filter_item--value))
+
+<a id="nestedatt--config--swimlanes--filter--items--filter_item--value"></a>
+### Nested Schema for `config.swimlanes.filter.items.filter_item.value`
+
+Optional:
+
+- `array_of_five` (Attributes List) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter--items--filter_item--value--array_of_five))
+- `boolean` (Boolean) Requires replacement if changed.
+- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
+- `number` (Number) Requires replacement if changed.
+- `str` (String) Requires replacement if changed.
+
+<a id="nestedatt--config--swimlanes--filter--items--filter_item--value--array_of_five"></a>
+### Nested Schema for `config.swimlanes.filter.items.filter_item.value.array_of_five`
+
+Optional:
+
+- `boolean` (Boolean) Requires replacement if changed.
+- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
+- `number` (Number) Requires replacement if changed.
+- `str` (String) Requires replacement if changed.

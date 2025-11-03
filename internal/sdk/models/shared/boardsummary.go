@@ -31,72 +31,72 @@ func (b *BoardSummary) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (b *BoardSummary) GetCreatedAt() *time.Time {
-	if b == nil {
+func (o *BoardSummary) GetCreatedAt() *time.Time {
+	if o == nil {
 		return nil
 	}
-	return b.CreatedAt
+	return o.CreatedAt
 }
 
-func (b *BoardSummary) GetCreatedBy() *string {
-	if b == nil {
+func (o *BoardSummary) GetCreatedBy() *string {
+	if o == nil {
 		return nil
 	}
-	return b.CreatedBy
+	return o.CreatedBy
 }
 
-func (b *BoardSummary) GetDescription() *string {
-	if b == nil {
+func (o *BoardSummary) GetDescription() *string {
+	if o == nil {
 		return nil
 	}
-	return b.Description
+	return o.Description
 }
 
-func (b *BoardSummary) GetID() *string {
-	if b == nil {
+func (o *BoardSummary) GetID() *string {
+	if o == nil {
 		return nil
 	}
-	return b.ID
+	return o.ID
 }
 
-func (b *BoardSummary) GetOrgID() *string {
-	if b == nil {
+func (o *BoardSummary) GetOrgID() *string {
+	if o == nil {
 		return nil
 	}
-	return b.OrgID
+	return o.OrgID
 }
 
-func (b *BoardSummary) GetSharedWith() []string {
-	if b == nil {
+func (o *BoardSummary) GetSharedWith() []string {
+	if o == nil {
 		return nil
 	}
-	return b.SharedWith
+	return o.SharedWith
 }
 
-func (b *BoardSummary) GetSharedWithOrg() *bool {
-	if b == nil {
+func (o *BoardSummary) GetSharedWithOrg() *bool {
+	if o == nil {
 		return nil
 	}
-	return b.SharedWithOrg
+	return o.SharedWithOrg
 }
 
-func (b *BoardSummary) GetTitle() *string {
-	if b == nil {
+func (o *BoardSummary) GetTitle() *string {
+	if o == nil {
 		return nil
 	}
-	return b.Title
+	return o.Title
 }
 
-func (b *BoardSummary) GetUpdatedAt() *time.Time {
-	if b == nil {
+func (o *BoardSummary) GetUpdatedAt() *time.Time {
+	if o == nil {
 		return nil
 	}
-	return b.UpdatedAt
+	return o.UpdatedAt
 }
 
-func (b *BoardSummary) GetUpdatedBy() *string {
-	if b == nil {
+func (o *BoardSummary) GetUpdatedBy() *string {
+	if o == nil {
 		return nil
 	}
-	return b.UpdatedBy
+	return o.UpdatedBy
 }

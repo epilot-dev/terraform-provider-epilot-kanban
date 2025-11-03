@@ -31,6 +31,6 @@ actions:
       x-speakeasy-entity-operation: Kanban#delete
 
   # Kanban Board Entity
-  - target: $["components"]["schemas"]["Kanban"]
+  - target: $["components"]["schemas"]["Board"]
     update:
       x-speakeasy-entity: Kanban

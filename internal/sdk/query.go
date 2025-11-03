@@ -63,7 +63,7 @@ func (s *Query) ExecuteFlowsQuery(ctx context.Context, request *shared.FlowsQuer
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "executeFlowsQuery",
-		OAuth2Scopes:     nil,
+		OAuth2Scopes:     []string{},
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 	bodyReader, reqContentType, err := utils.SerializeRequestBody(ctx, request, false, true, "Request", "json", `request:"mediaType=application/json"`)
@@ -269,7 +269,7 @@ func (s *Query) FlowsAutocomplete(ctx context.Context, request operations.FlowsA
 		BaseURL:          baseURL,
 		Context:          ctx,
 		OperationID:      "flowsAutocomplete",
-		OAuth2Scopes:     nil,
+		OAuth2Scopes:     []string{},
 		SecuritySource:   s.sdkConfiguration.Security,
 	}
 

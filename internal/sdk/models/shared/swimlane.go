@@ -10,37 +10,37 @@ type Swimlane struct {
 	TitleChipVariant *string      `json:"title_chip_variant,omitempty"`
 }
 
-func (s *Swimlane) GetFilter() *BoardFilter {
-	if s == nil {
+func (o *Swimlane) GetFilter() *BoardFilter {
+	if o == nil {
 		return nil
 	}
-	return s.Filter
+	return o.Filter
 }
 
-func (s *Swimlane) GetID() *string {
-	if s == nil {
+func (o *Swimlane) GetID() *string {
+	if o == nil {
 		return nil
 	}
-	return s.ID
+	return o.ID
 }
 
-func (s *Swimlane) GetPosition() *float64 {
-	if s == nil {
+func (o *Swimlane) GetPosition() *float64 {
+	if o == nil {
 		return nil
 	}
-	return s.Position
+	return o.Position
 }
 
-func (s *Swimlane) GetTitle() *string {
-	if s == nil {
+func (o *Swimlane) GetTitle() *string {
+	if o == nil {
 		return nil
 	}
-	return s.Title
+	return o.Title
 }
 
-func (s *Swimlane) GetTitleChipVariant() *string {
-	if s == nil {
+func (o *Swimlane) GetTitleChipVariant() *string {
+	if o == nil {
 		return nil
 	}
-	return s.TitleChipVariant
+	return o.TitleChipVariant
 }

@@ -14,32 +14,32 @@ type PatchKanbanBoardRequestBody struct {
 	Title         *string  `json:"title,omitempty"`
 }
 
-func (p *PatchKanbanBoardRequestBody) GetDescription() *string {
-	if p == nil {
+func (o *PatchKanbanBoardRequestBody) GetDescription() *string {
+	if o == nil {
 		return nil
 	}
-	return p.Description
+	return o.Description
 }
 
-func (p *PatchKanbanBoardRequestBody) GetSharedWith() []string {
-	if p == nil {
+func (o *PatchKanbanBoardRequestBody) GetSharedWith() []string {
+	if o == nil {
 		return nil
 	}
-	return p.SharedWith
+	return o.SharedWith
 }
 
-func (p *PatchKanbanBoardRequestBody) GetSharedWithOrg() *bool {
-	if p == nil {
+func (o *PatchKanbanBoardRequestBody) GetSharedWithOrg() *bool {
+	if o == nil {
 		return nil
 	}
-	return p.SharedWithOrg
+	return o.SharedWithOrg
 }
 
-func (p *PatchKanbanBoardRequestBody) GetTitle() *string {
-	if p == nil {
+func (o *PatchKanbanBoardRequestBody) GetTitle() *string {
+	if o == nil {
 		return nil
 	}
-	return p.Title
+	return o.Title
 }
 
 type PatchKanbanBoardRequest struct {
@@ -47,18 +47,18 @@ type PatchKanbanBoardRequest struct {
 	BoardID     string                       `pathParam:"style=simple,explode=false,name=boardId"`
 }
 
-func (p *PatchKanbanBoardRequest) GetRequestBody() *PatchKanbanBoardRequestBody {
-	if p == nil {
+func (o *PatchKanbanBoardRequest) GetRequestBody() *PatchKanbanBoardRequestBody {
+	if o == nil {
 		return nil
 	}
-	return p.RequestBody
+	return o.RequestBody
 }
 
-func (p *PatchKanbanBoardRequest) GetBoardID() string {
-	if p == nil {
+func (o *PatchKanbanBoardRequest) GetBoardID() string {
+	if o == nil {
 		return ""
 	}
-	return p.BoardID
+	return o.BoardID
 }
 
 type PatchKanbanBoardResponse struct {
@@ -72,30 +72,30 @@ type PatchKanbanBoardResponse struct {
 	RawResponse *http.Response
 }
 
-func (p *PatchKanbanBoardResponse) GetBoard() *shared.Board {
-	if p == nil {
+func (o *PatchKanbanBoardResponse) GetBoard() *shared.Board {
+	if o == nil {
 		return nil
 	}
-	return p.Board
+	return o.Board
 }
 
-func (p *PatchKanbanBoardResponse) GetContentType() string {
-	if p == nil {
+func (o *PatchKanbanBoardResponse) GetContentType() string {
+	if o == nil {
 		return ""
 	}
-	return p.ContentType
+	return o.ContentType
 }
 
-func (p *PatchKanbanBoardResponse) GetStatusCode() int {
-	if p == nil {
+func (o *PatchKanbanBoardResponse) GetStatusCode() int {
+	if o == nil {
 		return 0
 	}
-	return p.StatusCode
+	return o.StatusCode
 }
 
-func (p *PatchKanbanBoardResponse) GetRawResponse() *http.Response {
-	if p == nil {
+func (o *PatchKanbanBoardResponse) GetRawResponse() *http.Response {
+	if o == nil {
 		return nil
 	}
-	return p.RawResponse
+	return o.RawResponse
 }

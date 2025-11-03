@@ -26,44 +26,44 @@ func (f *FlowsQueryResult) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (f *FlowsQueryResult) GetAdditionalProperties() any {
-	if f == nil {
+func (o *FlowsQueryResult) GetAdditionalProperties() any {
+	if o == nil {
 		return nil
 	}
-	return f.AdditionalProperties
+	return o.AdditionalProperties
 }
 
-func (f *FlowsQueryResult) GetHits() *float64 {
-	if f == nil {
+func (o *FlowsQueryResult) GetHits() *float64 {
+	if o == nil {
 		return nil
 	}
-	return f.Hits
+	return o.Hits
 }
 
-func (f *FlowsQueryResult) GetPageNumber() *float64 {
-	if f == nil {
+func (o *FlowsQueryResult) GetPageNumber() *float64 {
+	if o == nil {
 		return nil
 	}
-	return f.PageNumber
+	return o.PageNumber
 }
 
-func (f *FlowsQueryResult) GetPageSize() *float64 {
-	if f == nil {
+func (o *FlowsQueryResult) GetPageSize() *float64 {
+	if o == nil {
 		return nil
 	}
-	return f.PageSize
+	return o.PageSize
 }
 
-func (f *FlowsQueryResult) GetResults() []map[string]any {
-	if f == nil {
+func (o *FlowsQueryResult) GetResults() []map[string]any {
+	if o == nil {
 		return nil
 	}
-	return f.Results
+	return o.Results
 }
 
-func (f *FlowsQueryResult) GetTotalPages() *float64 {
-	if f == nil {
+func (o *FlowsQueryResult) GetTotalPages() *float64 {
+	if o == nil {
 		return nil
 	}
-	return f.TotalPages
+	return o.TotalPages
 }

@@ -43,8 +43,8 @@ const (
 )
 
 type Items struct {
-	FilterItem  *FilterItem  `queryParam:"inline,name=items"`
-	FilterGroup *FilterGroup `queryParam:"inline,name=items"`
+	FilterItem  *FilterItem  `queryParam:"inline" name:"items"`
+	FilterGroup *FilterGroup `queryParam:"inline" name:"items"`
 
 	Type ItemsType
 }
@@ -69,43 +69,17 @@ func CreateItemsFilterGroup(filterGroup FilterGroup) Items {
 
 func (u *Items) UnmarshalJSON(data []byte) error {
 
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
 	var filterItem FilterItem = FilterItem{}
 	if err := utils.UnmarshalJSON(data, &filterItem, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ItemsTypeFilterItem,
-			Value: &filterItem,
-		})
+		u.FilterItem = &filterItem
+		u.Type = ItemsTypeFilterItem
+		return nil
 	}
 
 	var filterGroup FilterGroup = FilterGroup{}
 	if err := utils.UnmarshalJSON(data, &filterGroup, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ItemsTypeFilterGroup,
-			Value: &filterGroup,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Items", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Items", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(ItemsType)
-	switch best.Type {
-	case ItemsTypeFilterItem:
-		u.FilterItem = best.Value.(*FilterItem)
-		return nil
-	case ItemsTypeFilterGroup:
-		u.FilterGroup = best.Value.(*FilterGroup)
+		u.FilterGroup = &filterGroup
+		u.Type = ItemsTypeFilterGroup
 		return nil
 	}
 
@@ -129,16 +103,16 @@ type BoardFilter struct {
 	Items       []Items     `json:"items"`
 }
 
-func (b *BoardFilter) GetCombination() Combination {
-	if b == nil {
+func (o *BoardFilter) GetCombination() Combination {
+	if o == nil {
 		return Combination("")
 	}
-	return b.Combination
+	return o.Combination
 }
 
-func (b *BoardFilter) GetItems() []Items {
-	if b == nil {
+func (o *BoardFilter) GetItems() []Items {
+	if o == nil {
 		return []Items{}
 	}
-	return b.Items
+	return o.Items
 }

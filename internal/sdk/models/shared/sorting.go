@@ -50,16 +50,16 @@ func (s *Sorting) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (s *Sorting) GetDirection() *Direction {
-	if s == nil {
+func (o *Sorting) GetDirection() *Direction {
+	if o == nil {
 		return nil
 	}
-	return s.Direction
+	return o.Direction
 }
 
-func (s *Sorting) GetField() string {
-	if s == nil {
+func (o *Sorting) GetField() string {
+	if o == nil {
 		return ""
 	}
-	return s.Field
+	return o.Field
 }

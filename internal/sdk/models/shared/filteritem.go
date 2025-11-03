@@ -63,30 +63,30 @@ func (f *FilterItem) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (f *FilterItem) GetDataType() *DataType {
-	if f == nil {
+func (o *FilterItem) GetDataType() *DataType {
+	if o == nil {
 		return nil
 	}
-	return f.DataType
+	return o.DataType
 }
 
-func (f *FilterItem) GetKey() string {
-	if f == nil {
+func (o *FilterItem) GetKey() string {
+	if o == nil {
 		return ""
 	}
-	return f.Key
+	return o.Key
 }
 
-func (f *FilterItem) GetOperator() FilterOperator {
-	if f == nil {
+func (o *FilterItem) GetOperator() FilterOperator {
+	if o == nil {
 		return FilterOperator("")
 	}
-	return f.Operator
+	return o.Operator
 }
 
-func (f *FilterItem) GetValue() *ValueType {
-	if f == nil {
+func (o *FilterItem) GetValue() *ValueType {
+	if o == nil {
 		return nil
 	}
-	return f.Value
+	return o.Value
 }

@@ -18,10 +18,10 @@ const (
 )
 
 type Five struct {
-	Str              *string           `queryParam:"inline,name=five"`
-	DynamicDateValue *DynamicDateValue `queryParam:"inline,name=five"`
-	Number           *float64          `queryParam:"inline,name=five"`
-	Boolean          *bool             `queryParam:"inline,name=five"`
+	Str              *string           `queryParam:"inline" name:"five"`
+	DynamicDateValue *DynamicDateValue `queryParam:"inline" name:"five"`
+	Number           *float64          `queryParam:"inline" name:"five"`
+	Boolean          *bool             `queryParam:"inline" name:"five"`
 
 	Type FiveType
 }
@@ -64,65 +64,31 @@ func CreateFiveBoolean(boolean bool) Five {
 
 func (u *Five) UnmarshalJSON(data []byte) error {
 
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
 	var str string = ""
 	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  FiveTypeStr,
-			Value: &str,
-		})
+		u.Str = &str
+		u.Type = FiveTypeStr
+		return nil
 	}
 
 	var dynamicDateValue DynamicDateValue = DynamicDateValue("")
 	if err := utils.UnmarshalJSON(data, &dynamicDateValue, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  FiveTypeDynamicDateValue,
-			Value: &dynamicDateValue,
-		})
+		u.DynamicDateValue = &dynamicDateValue
+		u.Type = FiveTypeDynamicDateValue
+		return nil
 	}
 
 	var number float64 = float64(0)
 	if err := utils.UnmarshalJSON(data, &number, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  FiveTypeNumber,
-			Value: &number,
-		})
+		u.Number = &number
+		u.Type = FiveTypeNumber
+		return nil
 	}
 
 	var boolean bool = false
 	if err := utils.UnmarshalJSON(data, &boolean, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  FiveTypeBoolean,
-			Value: &boolean,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Five", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for Five", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(FiveType)
-	switch best.Type {
-	case FiveTypeStr:
-		u.Str = best.Value.(*string)
-		return nil
-	case FiveTypeDynamicDateValue:
-		u.DynamicDateValue = best.Value.(*DynamicDateValue)
-		return nil
-	case FiveTypeNumber:
-		u.Number = best.Value.(*float64)
-		return nil
-	case FiveTypeBoolean:
-		u.Boolean = best.Value.(*bool)
+		u.Boolean = &boolean
+		u.Type = FiveTypeBoolean
 		return nil
 	}
 
@@ -161,11 +127,11 @@ const (
 
 // ValueType - The value to compare against - can be a single value (string, number, boolean, or dynamic date) or an array of values
 type ValueType struct {
-	Str              *string           `queryParam:"inline,name=ValueType"`
-	DynamicDateValue *DynamicDateValue `queryParam:"inline,name=ValueType"`
-	Number           *float64          `queryParam:"inline,name=ValueType"`
-	Boolean          *bool             `queryParam:"inline,name=ValueType"`
-	ArrayOf5         []Five            `queryParam:"inline,name=ValueType"`
+	Str              *string           `queryParam:"inline" name:"ValueType"`
+	DynamicDateValue *DynamicDateValue `queryParam:"inline" name:"ValueType"`
+	Number           *float64          `queryParam:"inline" name:"ValueType"`
+	Boolean          *bool             `queryParam:"inline" name:"ValueType"`
+	ArrayOf5         []Five            `queryParam:"inline" name:"ValueType"`
 
 	Type ValueTypeType
 }
@@ -217,76 +183,38 @@ func CreateValueTypeArrayOf5(arrayOf5 []Five) ValueType {
 
 func (u *ValueType) UnmarshalJSON(data []byte) error {
 
-	var candidates []utils.UnionCandidate
-
-	// Collect all valid candidates
 	var str string = ""
 	if err := utils.UnmarshalJSON(data, &str, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ValueTypeTypeStr,
-			Value: &str,
-		})
+		u.Str = &str
+		u.Type = ValueTypeTypeStr
+		return nil
 	}
 
 	var dynamicDateValue DynamicDateValue = DynamicDateValue("")
 	if err := utils.UnmarshalJSON(data, &dynamicDateValue, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ValueTypeTypeDynamicDateValue,
-			Value: &dynamicDateValue,
-		})
+		u.DynamicDateValue = &dynamicDateValue
+		u.Type = ValueTypeTypeDynamicDateValue
+		return nil
 	}
 
 	var number float64 = float64(0)
 	if err := utils.UnmarshalJSON(data, &number, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ValueTypeTypeNumber,
-			Value: &number,
-		})
+		u.Number = &number
+		u.Type = ValueTypeTypeNumber
+		return nil
 	}
 
 	var boolean bool = false
 	if err := utils.UnmarshalJSON(data, &boolean, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ValueTypeTypeBoolean,
-			Value: &boolean,
-		})
+		u.Boolean = &boolean
+		u.Type = ValueTypeTypeBoolean
+		return nil
 	}
 
 	var arrayOf5 []Five = []Five{}
 	if err := utils.UnmarshalJSON(data, &arrayOf5, "", true, nil); err == nil {
-		candidates = append(candidates, utils.UnionCandidate{
-			Type:  ValueTypeTypeArrayOf5,
-			Value: arrayOf5,
-		})
-	}
-
-	if len(candidates) == 0 {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ValueType", string(data))
-	}
-
-	// Pick the best candidate using multi-stage filtering
-	best := utils.PickBestCandidate(candidates)
-	if best == nil {
-		return fmt.Errorf("could not unmarshal `%s` into any supported union types for ValueType", string(data))
-	}
-
-	// Set the union type and value based on the best candidate
-	u.Type = best.Type.(ValueTypeType)
-	switch best.Type {
-	case ValueTypeTypeStr:
-		u.Str = best.Value.(*string)
-		return nil
-	case ValueTypeTypeDynamicDateValue:
-		u.DynamicDateValue = best.Value.(*DynamicDateValue)
-		return nil
-	case ValueTypeTypeNumber:
-		u.Number = best.Value.(*float64)
-		return nil
-	case ValueTypeTypeBoolean:
-		u.Boolean = best.Value.(*bool)
-		return nil
-	case ValueTypeTypeArrayOf5:
-		u.ArrayOf5 = best.Value.([]Five)
+		u.ArrayOf5 = arrayOf5
+		u.Type = ValueTypeTypeArrayOf5
 		return nil
 	}
 
