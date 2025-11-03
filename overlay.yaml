@@ -16,7 +16,7 @@ actions:
           - 5XX
         retryConnectionErrors: true
 
-  # Kanban
+  # Kanban Board APIs
   - target: $["paths"]["/v1/kanban/board"]["post"]
     update:
       x-speakeasy-entity-operation: Kanban#create
@@ -29,6 +29,8 @@ actions:
   - target: $["paths"]["/v1/kanban/board/{id}"]["delete"]
     update:
       x-speakeasy-entity-operation: Kanban#delete
+
+  # Kanban Board Entity
   - target: $["components"]["schemas"]["Kanban"]
     update:
       x-speakeasy-entity: Kanban
