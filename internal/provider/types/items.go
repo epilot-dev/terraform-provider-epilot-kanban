@@ -2,7 +2,11 @@
 
 package types
 
+import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
+)
+
 type Items struct {
-	FilterGroup *FilterGroup `queryParam:"inline" tfsdk:"filter_group" tfPlanOnly:"true"`
-	FilterItem  *FilterItem  `queryParam:"inline" tfsdk:"filter_item" tfPlanOnly:"true"`
+	Any         jsontypes.Normalized `queryParam:"inline" tfsdk:"any" tfPlanOnly:"true"`
+	FilterGroup *FilterGroup         `queryParam:"inline" tfsdk:"filter_group" tfPlanOnly:"true"`
 }

@@ -36,7 +36,7 @@ func (e *FilterGroupCombination) UnmarshalJSON(data []byte) error {
 
 type FilterGroup struct {
 	Combination FilterGroupCombination `json:"combination"`
-	Items       []FilterItem           `json:"items"`
+	Items       []any                  `json:"items"`
 }
 
 func (f FilterGroup) MarshalJSON() ([]byte, error) {
@@ -50,16 +50,16 @@ func (f *FilterGroup) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *FilterGroup) GetCombination() FilterGroupCombination {
-	if o == nil {
+func (f *FilterGroup) GetCombination() FilterGroupCombination {
+	if f == nil {
 		return FilterGroupCombination("")
 	}
-	return o.Combination
+	return f.Combination
 }
 
-func (o *FilterGroup) GetItems() []FilterItem {
-	if o == nil {
-		return []FilterItem{}
+func (f *FilterGroup) GetItems() []any {
+	if f == nil {
+		return []any{}
 	}
-	return o.Items
+	return f.Items
 }

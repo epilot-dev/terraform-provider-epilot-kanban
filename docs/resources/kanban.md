@@ -19,13 +19,11 @@ resource "epilot-kanban_kanban" "my_kanban" {
       combination = "OR"
       items = [
         {
-          filter_item = {
-            data_type = "string"
-            key       = "assignee"
-            operator  = "EQUALS"
-            value = {
-              number = 42
-            }
+          filter_group = {
+            combination = "AND"
+            items = [
+              "{ \"see\": \"documentation\" }"
+            ]
           }
         }
       ]
@@ -47,14 +45,11 @@ resource "epilot-kanban_kanban" "my_kanban" {
           combination = "OR"
           items = [
             {
-              filter_item = {
-                data_type = "string"
-                key       = "assignee"
-                operator  = "EQUALS"
-                value = {
-                  dynamic_date_value = "LAST_MONTH"
-                  str                = "100020"
-                }
+              filter_group = {
+                combination = "AND"
+                items = [
+                  "{ \"see\": \"documentation\" }"
+                ]
               }
             }
           ]
@@ -126,8 +121,8 @@ Optional:
 
 Optional:
 
+- `any` (String) Requires replacement if changed.; Parsed as JSON.
 - `filter_group` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter--items--filter_group))
-- `filter_item` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter--items--filter_item))
 
 <a id="nestedatt--config--board_filter--items--filter_group"></a>
 ### Nested Schema for `config.board_filter.items.filter_group`
@@ -135,75 +130,7 @@ Optional:
 Optional:
 
 - `combination` (String) Not Null; must be one of ["AND", "OR"]; Requires replacement if changed.
-- `items` (Attributes List) Not Null; Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter--items--filter_group--items))
-
-<a id="nestedatt--config--board_filter--items--filter_group--items"></a>
-### Nested Schema for `config.board_filter.items.filter_group.items`
-
-Optional:
-
-- `data_type` (String) The data type of the field. must be one of ["string", "number", "boolean", "date"]; Requires replacement if changed.
-- `key` (String) The field key to filter on. Not Null; Requires replacement if changed.
-- `operator` (String) The comparison operator for filtering. Not Null; must be one of ["EQUALS", "NOT_EQUALS", "EMPTY", "NOT_EMPTY", "CONTAINS", "NOT_CONTAINS", "IS_ONE_OF", "IS_NONE_OF", "GREATER_THAN", "LESS_THAN", "GREATER_THAN_OR_EQUAL", "LESS_THAN_OR_EQUAL"]; Requires replacement if changed.
-- `value` (Attributes) The value to compare against - can be a single value (string, number, boolean, or dynamic date) or an array of values. Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter--items--filter_group--items--value))
-
-<a id="nestedatt--config--board_filter--items--filter_group--items--value"></a>
-### Nested Schema for `config.board_filter.items.filter_group.items.value`
-
-Optional:
-
-- `array_of_five` (Attributes List) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter--items--filter_group--items--value--array_of_five))
-- `boolean` (Boolean) Requires replacement if changed.
-- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
-- `number` (Number) Requires replacement if changed.
-- `str` (String) Requires replacement if changed.
-
-<a id="nestedatt--config--board_filter--items--filter_group--items--value--array_of_five"></a>
-### Nested Schema for `config.board_filter.items.filter_group.items.value.array_of_five`
-
-Optional:
-
-- `boolean` (Boolean) Requires replacement if changed.
-- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
-- `number` (Number) Requires replacement if changed.
-- `str` (String) Requires replacement if changed.
-
-
-
-
-
-<a id="nestedatt--config--board_filter--items--filter_item"></a>
-### Nested Schema for `config.board_filter.items.filter_item`
-
-Optional:
-
-- `data_type` (String) The data type of the field. must be one of ["string", "number", "boolean", "date"]; Requires replacement if changed.
-- `key` (String) The field key to filter on. Not Null; Requires replacement if changed.
-- `operator` (String) The comparison operator for filtering. Not Null; must be one of ["EQUALS", "NOT_EQUALS", "EMPTY", "NOT_EMPTY", "CONTAINS", "NOT_CONTAINS", "IS_ONE_OF", "IS_NONE_OF", "GREATER_THAN", "LESS_THAN", "GREATER_THAN_OR_EQUAL", "LESS_THAN_OR_EQUAL"]; Requires replacement if changed.
-- `value` (Attributes) The value to compare against - can be a single value (string, number, boolean, or dynamic date) or an array of values. Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter--items--filter_item--value))
-
-<a id="nestedatt--config--board_filter--items--filter_item--value"></a>
-### Nested Schema for `config.board_filter.items.filter_item.value`
-
-Optional:
-
-- `array_of_five` (Attributes List) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--board_filter--items--filter_item--value--array_of_five))
-- `boolean` (Boolean) Requires replacement if changed.
-- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
-- `number` (Number) Requires replacement if changed.
-- `str` (String) Requires replacement if changed.
-
-<a id="nestedatt--config--board_filter--items--filter_item--value--array_of_five"></a>
-### Nested Schema for `config.board_filter.items.filter_item.value.array_of_five`
-
-Optional:
-
-- `boolean` (Boolean) Requires replacement if changed.
-- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
-- `number` (Number) Requires replacement if changed.
-- `str` (String) Requires replacement if changed.
-
-
+- `items` (List of String) Not Null; Requires replacement if changed.
 
 
 
@@ -249,8 +176,8 @@ Optional:
 
 Optional:
 
+- `any` (String) Requires replacement if changed.; Parsed as JSON.
 - `filter_group` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter--items--filter_group))
-- `filter_item` (Attributes) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter--items--filter_item))
 
 <a id="nestedatt--config--swimlanes--filter--items--filter_group"></a>
 ### Nested Schema for `config.swimlanes.filter.items.filter_group`
@@ -258,70 +185,4 @@ Optional:
 Optional:
 
 - `combination` (String) Not Null; must be one of ["AND", "OR"]; Requires replacement if changed.
-- `items` (Attributes List) Not Null; Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter--items--filter_group--items))
-
-<a id="nestedatt--config--swimlanes--filter--items--filter_group--items"></a>
-### Nested Schema for `config.swimlanes.filter.items.filter_group.items`
-
-Optional:
-
-- `data_type` (String) The data type of the field. must be one of ["string", "number", "boolean", "date"]; Requires replacement if changed.
-- `key` (String) The field key to filter on. Not Null; Requires replacement if changed.
-- `operator` (String) The comparison operator for filtering. Not Null; must be one of ["EQUALS", "NOT_EQUALS", "EMPTY", "NOT_EMPTY", "CONTAINS", "NOT_CONTAINS", "IS_ONE_OF", "IS_NONE_OF", "GREATER_THAN", "LESS_THAN", "GREATER_THAN_OR_EQUAL", "LESS_THAN_OR_EQUAL"]; Requires replacement if changed.
-- `value` (Attributes) The value to compare against - can be a single value (string, number, boolean, or dynamic date) or an array of values. Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter--items--filter_group--items--value))
-
-<a id="nestedatt--config--swimlanes--filter--items--filter_group--items--value"></a>
-### Nested Schema for `config.swimlanes.filter.items.filter_group.items.value`
-
-Optional:
-
-- `array_of_five` (Attributes List) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter--items--filter_group--items--value--array_of_five))
-- `boolean` (Boolean) Requires replacement if changed.
-- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
-- `number` (Number) Requires replacement if changed.
-- `str` (String) Requires replacement if changed.
-
-<a id="nestedatt--config--swimlanes--filter--items--filter_group--items--value--array_of_five"></a>
-### Nested Schema for `config.swimlanes.filter.items.filter_group.items.value.array_of_five`
-
-Optional:
-
-- `boolean` (Boolean) Requires replacement if changed.
-- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
-- `number` (Number) Requires replacement if changed.
-- `str` (String) Requires replacement if changed.
-
-
-
-
-
-<a id="nestedatt--config--swimlanes--filter--items--filter_item"></a>
-### Nested Schema for `config.swimlanes.filter.items.filter_item`
-
-Optional:
-
-- `data_type` (String) The data type of the field. must be one of ["string", "number", "boolean", "date"]; Requires replacement if changed.
-- `key` (String) The field key to filter on. Not Null; Requires replacement if changed.
-- `operator` (String) The comparison operator for filtering. Not Null; must be one of ["EQUALS", "NOT_EQUALS", "EMPTY", "NOT_EMPTY", "CONTAINS", "NOT_CONTAINS", "IS_ONE_OF", "IS_NONE_OF", "GREATER_THAN", "LESS_THAN", "GREATER_THAN_OR_EQUAL", "LESS_THAN_OR_EQUAL"]; Requires replacement if changed.
-- `value` (Attributes) The value to compare against - can be a single value (string, number, boolean, or dynamic date) or an array of values. Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter--items--filter_item--value))
-
-<a id="nestedatt--config--swimlanes--filter--items--filter_item--value"></a>
-### Nested Schema for `config.swimlanes.filter.items.filter_item.value`
-
-Optional:
-
-- `array_of_five` (Attributes List) Requires replacement if changed. (see [below for nested schema](#nestedatt--config--swimlanes--filter--items--filter_item--value--array_of_five))
-- `boolean` (Boolean) Requires replacement if changed.
-- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
-- `number` (Number) Requires replacement if changed.
-- `str` (String) Requires replacement if changed.
-
-<a id="nestedatt--config--swimlanes--filter--items--filter_item--value--array_of_five"></a>
-### Nested Schema for `config.swimlanes.filter.items.filter_item.value.array_of_five`
-
-Optional:
-
-- `boolean` (Boolean) Requires replacement if changed.
-- `dynamic_date_value` (String) Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.
-- `number` (Number) Requires replacement if changed.
-- `str` (String) Requires replacement if changed.
+- `items` (List of String) Not Null; Requires replacement if changed.

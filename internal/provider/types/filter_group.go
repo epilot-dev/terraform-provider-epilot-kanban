@@ -3,10 +3,11 @@
 package types
 
 import (
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type FilterGroup struct {
-	Combination types.String `tfsdk:"combination"`
-	Items       []FilterItem `tfsdk:"items"`
+	Combination types.String           `tfsdk:"combination"`
+	Items       []jsontypes.Normalized `tfsdk:"items"`
 }

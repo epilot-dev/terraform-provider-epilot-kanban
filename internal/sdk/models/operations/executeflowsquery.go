@@ -18,30 +18,30 @@ type ExecuteFlowsQueryResponse struct {
 	RawResponse *http.Response
 }
 
-func (o *ExecuteFlowsQueryResponse) GetContentType() string {
-	if o == nil {
+func (e *ExecuteFlowsQueryResponse) GetContentType() string {
+	if e == nil {
 		return ""
 	}
-	return o.ContentType
+	return e.ContentType
 }
 
-func (o *ExecuteFlowsQueryResponse) GetFlowsQueryResult() *shared.FlowsQueryResult {
-	if o == nil {
+func (e *ExecuteFlowsQueryResponse) GetFlowsQueryResult() *shared.FlowsQueryResult {
+	if e == nil {
 		return nil
 	}
-	return o.FlowsQueryResult
+	return e.FlowsQueryResult
 }
 
-func (o *ExecuteFlowsQueryResponse) GetStatusCode() int {
-	if o == nil {
+func (e *ExecuteFlowsQueryResponse) GetStatusCode() int {
+	if e == nil {
 		return 0
 	}
-	return o.StatusCode
+	return e.StatusCode
 }
 
-func (o *ExecuteFlowsQueryResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (e *ExecuteFlowsQueryResponse) GetRawResponse() *http.Response {
+	if e == nil {
 		return nil
 	}
-	return o.RawResponse
+	return e.RawResponse
 }

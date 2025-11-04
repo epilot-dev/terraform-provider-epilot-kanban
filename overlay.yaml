@@ -32,3 +32,6 @@ actions:
   - target: $["components"]["schemas"]["Board"]
     update:
       x-speakeasy-entity: Kanban
+  - target: $["components"]["schemas"]["FilterItem"]
+    update:
+      x-speakeasy-type-override: any

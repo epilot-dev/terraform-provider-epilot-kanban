@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: 5a857039-7f4b-42d5-86fd-449767242ed2
 management:
-  docChecksum: 833b72cd10b1c3e7c825744450958b7c
+  docChecksum: 2980074f5f2f003928c9ba9f5e3721c9
   docVersion: 1.2.2
-  speakeasyVersion: 1.611.0
-  generationVersion: 2.694.1
-  releaseVersion: 0.16.10
-  configChecksum: 7c13a0e04a6579a61bb926d6852b55d0
+  speakeasyVersion: 1.643.3
+  generationVersion: 2.731.9
+  releaseVersion: 0.18.0
+  configChecksum: 926a62fb5cf7157daae5c6a05c255f5f
   repoURL: https://github.com/epilot-dev/terraform-provider-epilot-product.git
   repoSubDirectory: .
   published: true
@@ -22,16 +22,16 @@ features:
   terraform:
     additionalDependencies: 0.1.0
     additionalProperties: 0.1.2
-    constsAndDefaults: 0.2.1
-    core: 3.44.1
-    globalSecurity: 2.82.0
+    constsAndDefaults: 0.3.0
+    core: 3.46.4
+    globalSecurity: 2.82.1
     globalServerURLs: 2.83.0
     retries: 2.81.4
-    unions: 2.81.17
+    typeOverrides: 2.81.1
+    unions: 2.82.2
 generatedFiles:
   - .gitattributes
   - USAGE.md
-  - examples/README.md
   - examples/provider/provider.tf
   - examples/resources/epilot-kanban_kanban/resource.tf
   - go.mod
@@ -72,12 +72,9 @@ generatedFiles:
   - internal/provider/types/card_config.go
   - internal/provider/types/config.go
   - internal/provider/types/filter_group.go
-  - internal/provider/types/filter_item.go
-  - internal/provider/types/five.go
   - internal/provider/types/items.go
   - internal/provider/types/sorting.go
   - internal/provider/types/swimlane.go
-  - internal/provider/types/value_type.go
   - internal/provider/utils.go
   - internal/sdk/.gitattributes
   - internal/sdk/docs/models/operations/option.md
@@ -108,23 +105,20 @@ generatedFiles:
   - internal/sdk/models/shared/board.go
   - internal/sdk/models/shared/boardfilter.go
   - internal/sdk/models/shared/boardsummary.go
-  - internal/sdk/models/shared/dynamicdatevalue.go
   - internal/sdk/models/shared/filtergroup.go
-  - internal/sdk/models/shared/filteritem.go
-  - internal/sdk/models/shared/filteroperator.go
   - internal/sdk/models/shared/flowsqueryrequest.go
   - internal/sdk/models/shared/flowsqueryresult.go
   - internal/sdk/models/shared/security.go
   - internal/sdk/models/shared/sorting.go
   - internal/sdk/models/shared/swimlane.go
-  - internal/sdk/models/shared/valuetype.go
+  - internal/sdk/optionalnullable/optionalnullable.go
+  - internal/sdk/optionalnullable/optionalnullable_test.go
   - internal/sdk/query.go
   - internal/sdk/retry/config.go
   - internal/sdk/sdk.go
   - internal/sdk/types/bigint.go
   - internal/sdk/types/date.go
   - internal/sdk/types/datetime.go
-  - internal/sdk/types/decimal.go
   - internal/sdk/types/pointers.go
   - internal/validators/DateValidator.go
   - internal/validators/ExactlyOneChild.go
