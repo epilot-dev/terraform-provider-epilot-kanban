@@ -39,7 +39,7 @@ terraform {
   required_providers {
     epilot-kanban = {
       source  = "epilot-dev/epilot-kanban"
-      version = "0.16.10"
+      version = "0.17.4"
     }
   }
 }
@@ -70,6 +70,8 @@ Available configuration:
 
 * [epilot-kanban_kanban](docs/resources/kanban.md)
 ### Data Sources
+
+* [epilot-kanban_kanban](docs/data-sources/kanban.md)
 <!-- End Available Resources and Data Sources [operations] -->
 
 <!-- Start Testing the provider locally [usage] -->

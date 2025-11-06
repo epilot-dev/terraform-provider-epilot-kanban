@@ -5,7 +5,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	speakeasy_boolplanmodifier "github.com/epilot-dev/terraform-provider-epilot-kanban/internal/planmodifiers/boolplanmodifier"
 	speakeasy_float64planmodifier "github.com/epilot-dev/terraform-provider-epilot-kanban/internal/planmodifiers/float64planmodifier"
 	speakeasy_listplanmodifier "github.com/epilot-dev/terraform-provider-epilot-kanban/internal/planmodifiers/listplanmodifier"
 	speakeasy_objectplanmodifier "github.com/epilot-dev/terraform-provider-epilot-kanban/internal/planmodifiers/objectplanmodifier"
@@ -16,15 +15,13 @@ import (
 	speakeasy_listvalidators "github.com/epilot-dev/terraform-provider-epilot-kanban/internal/validators/listvalidators"
 	speakeasy_objectvalidators "github.com/epilot-dev/terraform-provider-epilot-kanban/internal/validators/objectvalidators"
 	speakeasy_stringvalidators "github.com/epilot-dev/terraform-provider-epilot-kanban/internal/validators/stringvalidators"
-	"github.com/hashicorp/terraform-plugin-framework-validators/boolvalidator"
-	"github.com/hashicorp/terraform-plugin-framework-validators/float64validator"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework-validators/listvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/objectvalidator"
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/boolplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/float64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectplanmodifier"
@@ -52,17 +49,18 @@ type KanbanResource struct {
 
 // KanbanResourceModel describes the resource data model.
 type KanbanResourceModel struct {
-	Config        tfTypes.Config `tfsdk:"config"`
-	CreatedAt     types.String   `tfsdk:"created_at"`
-	CreatedBy     types.String   `tfsdk:"created_by"`
-	Description   types.String   `tfsdk:"description"`
-	ID            types.String   `tfsdk:"id"`
-	OrgID         types.String   `tfsdk:"org_id"`
-	SharedWith    []types.String `tfsdk:"shared_with"`
-	SharedWithOrg types.Bool     `tfsdk:"shared_with_org"`
-	Title         types.String   `tfsdk:"title"`
-	UpdatedAt     types.String   `tfsdk:"updated_at"`
-	UpdatedBy     types.String   `tfsdk:"updated_by"`
+	Config        *tfTypes.Config `tfsdk:"config"`
+	CreatedAt     types.String    `tfsdk:"created_at"`
+	CreatedBy     types.String    `tfsdk:"created_by"`
+	Description   types.String    `tfsdk:"description"`
+	ID            types.String    `tfsdk:"id"`
+	OrgID         types.String    `tfsdk:"org_id"`
+	Owners        []types.String  `tfsdk:"owners"`
+	SharedWith    []types.String  `tfsdk:"shared_with"`
+	SharedWithOrg types.Bool      `tfsdk:"shared_with_org"`
+	Title         types.String    `tfsdk:"title"`
+	UpdatedAt     types.String    `tfsdk:"updated_at"`
+	UpdatedBy     types.String    `tfsdk:"updated_by"`
 }
 
 func (r *KanbanResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -74,7 +72,8 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 		MarkdownDescription: "Kanban Resource",
 		Attributes: map[string]schema.Attribute{
 			"config": schema.SingleNestedAttribute{
-				Required: true,
+				Computed: true,
+				Optional: true,
 				PlanModifiers: []planmodifier.Object{
 					objectplanmodifier.RequiresReplaceIfConfigured(),
 					speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
@@ -120,6 +119,21 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 										speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 									},
 									Attributes: map[string]schema.Attribute{
+										"any": schema.StringAttribute{
+											CustomType: jsontypes.NormalizedType{},
+											Computed:   true,
+											Optional:   true,
+											PlanModifiers: []planmodifier.String{
+												stringplanmodifier.RequiresReplaceIfConfigured(),
+												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+											},
+											Description: `Requires replacement if changed.; Parsed as JSON.`,
+											Validators: []validator.String{
+												stringvalidator.ConflictsWith(path.Expressions{
+													path.MatchRelative().AtParent().AtName("filter_group"),
+												}...),
+											},
+										},
 										"filter_group": schema.SingleNestedAttribute{
 											Computed: true,
 											Optional: true,
@@ -144,554 +158,25 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 														),
 													},
 												},
-												"items": schema.ListNestedAttribute{
+												"items": schema.ListAttribute{
 													Computed: true,
 													Optional: true,
 													PlanModifiers: []planmodifier.List{
 														listplanmodifier.RequiresReplaceIfConfigured(),
 														speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 													},
-													NestedObject: schema.NestedAttributeObject{
-														Validators: []validator.Object{
-															speakeasy_objectvalidators.NotNull(),
-														},
-														PlanModifiers: []planmodifier.Object{
-															objectplanmodifier.RequiresReplaceIfConfigured(),
-															speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-														},
-														Attributes: map[string]schema.Attribute{
-															"data_type": schema.StringAttribute{
-																Computed: true,
-																Optional: true,
-																PlanModifiers: []planmodifier.String{
-																	stringplanmodifier.RequiresReplaceIfConfigured(),
-																	speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																},
-																Description: `The data type of the field. must be one of ["string", "number", "boolean", "date"]; Requires replacement if changed.`,
-																Validators: []validator.String{
-																	stringvalidator.OneOf(
-																		"string",
-																		"number",
-																		"boolean",
-																		"date",
-																	),
-																},
-															},
-															"key": schema.StringAttribute{
-																Computed: true,
-																Optional: true,
-																PlanModifiers: []planmodifier.String{
-																	stringplanmodifier.RequiresReplaceIfConfigured(),
-																	speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																},
-																Description: `The field key to filter on. Not Null; Requires replacement if changed.`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																},
-															},
-															"operator": schema.StringAttribute{
-																Computed: true,
-																Optional: true,
-																PlanModifiers: []planmodifier.String{
-																	stringplanmodifier.RequiresReplaceIfConfigured(),
-																	speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																},
-																Description: `The comparison operator for filtering. Not Null; must be one of ["EQUALS", "NOT_EQUALS", "EMPTY", "NOT_EMPTY", "CONTAINS", "NOT_CONTAINS", "IS_ONE_OF", "IS_NONE_OF", "GREATER_THAN", "LESS_THAN", "GREATER_THAN_OR_EQUAL", "LESS_THAN_OR_EQUAL"]; Requires replacement if changed.`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																	stringvalidator.OneOf(
-																		"EQUALS",
-																		"NOT_EQUALS",
-																		"EMPTY",
-																		"NOT_EMPTY",
-																		"CONTAINS",
-																		"NOT_CONTAINS",
-																		"IS_ONE_OF",
-																		"IS_NONE_OF",
-																		"GREATER_THAN",
-																		"LESS_THAN",
-																		"GREATER_THAN_OR_EQUAL",
-																		"LESS_THAN_OR_EQUAL",
-																	),
-																},
-															},
-															"value": schema.SingleNestedAttribute{
-																Computed: true,
-																Optional: true,
-																PlanModifiers: []planmodifier.Object{
-																	objectplanmodifier.RequiresReplaceIfConfigured(),
-																	speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-																},
-																Attributes: map[string]schema.Attribute{
-																	"array_of_five": schema.ListNestedAttribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.List{
-																			listplanmodifier.RequiresReplaceIfConfigured(),
-																			speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
-																		},
-																		NestedObject: schema.NestedAttributeObject{
-																			Validators: []validator.Object{
-																				speakeasy_objectvalidators.NotNull(),
-																			},
-																			PlanModifiers: []planmodifier.Object{
-																				objectplanmodifier.RequiresReplaceIfConfigured(),
-																				speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-																			},
-																			Attributes: map[string]schema.Attribute{
-																				"boolean": schema.BoolAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.Bool{
-																						boolplanmodifier.RequiresReplaceIfConfigured(),
-																						speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
-																					},
-																					Description: `Requires replacement if changed.`,
-																					Validators: []validator.Bool{
-																						boolvalidator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("str"),
-																							path.MatchRelative().AtParent().AtName("number"),
-																							path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																						}...),
-																					},
-																				},
-																				"dynamic_date_value": schema.StringAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.String{
-																						stringplanmodifier.RequiresReplaceIfConfigured(),
-																						speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																					},
-																					Description: `Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.`,
-																					Validators: []validator.String{
-																						stringvalidator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("str"),
-																							path.MatchRelative().AtParent().AtName("number"),
-																							path.MatchRelative().AtParent().AtName("boolean"),
-																						}...),
-																						stringvalidator.OneOf(
-																							"TODAY",
-																							"TOMORROW",
-																							"YESTERDAY",
-																							"IN_THE_FUTURE",
-																							"IN_THE_PAST",
-																							"THIS_WEEK",
-																							"NEXT_WEEK",
-																							"LAST_WEEK",
-																							"THIS_MONTH",
-																							"NEXT_MONTH",
-																							"LAST_MONTH",
-																						),
-																					},
-																				},
-																				"number": schema.Float64Attribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.Float64{
-																						float64planmodifier.RequiresReplaceIfConfigured(),
-																						speakeasy_float64planmodifier.SuppressDiff(speakeasy_float64planmodifier.ExplicitSuppress),
-																					},
-																					Description: `Requires replacement if changed.`,
-																					Validators: []validator.Float64{
-																						float64validator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("str"),
-																							path.MatchRelative().AtParent().AtName("boolean"),
-																							path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																						}...),
-																					},
-																				},
-																				"str": schema.StringAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.String{
-																						stringplanmodifier.RequiresReplaceIfConfigured(),
-																						speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																					},
-																					Description: `Requires replacement if changed.`,
-																					Validators: []validator.String{
-																						stringvalidator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("number"),
-																							path.MatchRelative().AtParent().AtName("boolean"),
-																							path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																						}...),
-																					},
-																				},
-																			},
-																		},
-																		Description: `Requires replacement if changed.`,
-																		Validators: []validator.List{
-																			listvalidator.ConflictsWith(path.Expressions{
-																				path.MatchRelative().AtParent().AtName("str"),
-																				path.MatchRelative().AtParent().AtName("number"),
-																				path.MatchRelative().AtParent().AtName("boolean"),
-																				path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																			}...),
-																		},
-																	},
-																	"boolean": schema.BoolAttribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.Bool{
-																			boolplanmodifier.RequiresReplaceIfConfigured(),
-																			speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
-																		},
-																		Description: `Requires replacement if changed.`,
-																		Validators: []validator.Bool{
-																			boolvalidator.ConflictsWith(path.Expressions{
-																				path.MatchRelative().AtParent().AtName("str"),
-																				path.MatchRelative().AtParent().AtName("number"),
-																				path.MatchRelative().AtParent().AtName("array_of_five"),
-																				path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																			}...),
-																		},
-																	},
-																	"dynamic_date_value": schema.StringAttribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.String{
-																			stringplanmodifier.RequiresReplaceIfConfigured(),
-																			speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																		},
-																		Description: `Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.`,
-																		Validators: []validator.String{
-																			stringvalidator.ConflictsWith(path.Expressions{
-																				path.MatchRelative().AtParent().AtName("str"),
-																				path.MatchRelative().AtParent().AtName("number"),
-																				path.MatchRelative().AtParent().AtName("boolean"),
-																				path.MatchRelative().AtParent().AtName("array_of_five"),
-																			}...),
-																			stringvalidator.OneOf(
-																				"TODAY",
-																				"TOMORROW",
-																				"YESTERDAY",
-																				"IN_THE_FUTURE",
-																				"IN_THE_PAST",
-																				"THIS_WEEK",
-																				"NEXT_WEEK",
-																				"LAST_WEEK",
-																				"THIS_MONTH",
-																				"NEXT_MONTH",
-																				"LAST_MONTH",
-																			),
-																		},
-																	},
-																	"number": schema.Float64Attribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.Float64{
-																			float64planmodifier.RequiresReplaceIfConfigured(),
-																			speakeasy_float64planmodifier.SuppressDiff(speakeasy_float64planmodifier.ExplicitSuppress),
-																		},
-																		Description: `Requires replacement if changed.`,
-																		Validators: []validator.Float64{
-																			float64validator.ConflictsWith(path.Expressions{
-																				path.MatchRelative().AtParent().AtName("str"),
-																				path.MatchRelative().AtParent().AtName("boolean"),
-																				path.MatchRelative().AtParent().AtName("array_of_five"),
-																				path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																			}...),
-																		},
-																	},
-																	"str": schema.StringAttribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.String{
-																			stringplanmodifier.RequiresReplaceIfConfigured(),
-																			speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																		},
-																		Description: `Requires replacement if changed.`,
-																		Validators: []validator.String{
-																			stringvalidator.ConflictsWith(path.Expressions{
-																				path.MatchRelative().AtParent().AtName("number"),
-																				path.MatchRelative().AtParent().AtName("boolean"),
-																				path.MatchRelative().AtParent().AtName("array_of_five"),
-																				path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																			}...),
-																		},
-																	},
-																},
-																Description: `The value to compare against - can be a single value (string, number, boolean, or dynamic date) or an array of values. Requires replacement if changed.`,
-															},
-														},
-													},
+													ElementType: jsontypes.NormalizedType{},
 													Description: `Not Null; Requires replacement if changed.`,
 													Validators: []validator.List{
 														speakeasy_listvalidators.NotNull(),
+														listvalidator.ValueStringsAre(validators.IsValidJSON()),
 													},
 												},
 											},
 											Description: `Requires replacement if changed.`,
 											Validators: []validator.Object{
 												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("filter_item"),
-												}...),
-											},
-										},
-										"filter_item": schema.SingleNestedAttribute{
-											Computed: true,
-											Optional: true,
-											PlanModifiers: []planmodifier.Object{
-												objectplanmodifier.RequiresReplaceIfConfigured(),
-												speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-											},
-											Attributes: map[string]schema.Attribute{
-												"data_type": schema.StringAttribute{
-													Computed: true,
-													Optional: true,
-													PlanModifiers: []planmodifier.String{
-														stringplanmodifier.RequiresReplaceIfConfigured(),
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
-													Description: `The data type of the field. must be one of ["string", "number", "boolean", "date"]; Requires replacement if changed.`,
-													Validators: []validator.String{
-														stringvalidator.OneOf(
-															"string",
-															"number",
-															"boolean",
-															"date",
-														),
-													},
-												},
-												"key": schema.StringAttribute{
-													Computed: true,
-													Optional: true,
-													PlanModifiers: []planmodifier.String{
-														stringplanmodifier.RequiresReplaceIfConfigured(),
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
-													Description: `The field key to filter on. Not Null; Requires replacement if changed.`,
-													Validators: []validator.String{
-														speakeasy_stringvalidators.NotNull(),
-													},
-												},
-												"operator": schema.StringAttribute{
-													Computed: true,
-													Optional: true,
-													PlanModifiers: []planmodifier.String{
-														stringplanmodifier.RequiresReplaceIfConfigured(),
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-													},
-													Description: `The comparison operator for filtering. Not Null; must be one of ["EQUALS", "NOT_EQUALS", "EMPTY", "NOT_EMPTY", "CONTAINS", "NOT_CONTAINS", "IS_ONE_OF", "IS_NONE_OF", "GREATER_THAN", "LESS_THAN", "GREATER_THAN_OR_EQUAL", "LESS_THAN_OR_EQUAL"]; Requires replacement if changed.`,
-													Validators: []validator.String{
-														speakeasy_stringvalidators.NotNull(),
-														stringvalidator.OneOf(
-															"EQUALS",
-															"NOT_EQUALS",
-															"EMPTY",
-															"NOT_EMPTY",
-															"CONTAINS",
-															"NOT_CONTAINS",
-															"IS_ONE_OF",
-															"IS_NONE_OF",
-															"GREATER_THAN",
-															"LESS_THAN",
-															"GREATER_THAN_OR_EQUAL",
-															"LESS_THAN_OR_EQUAL",
-														),
-													},
-												},
-												"value": schema.SingleNestedAttribute{
-													Computed: true,
-													Optional: true,
-													PlanModifiers: []planmodifier.Object{
-														objectplanmodifier.RequiresReplaceIfConfigured(),
-														speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-													},
-													Attributes: map[string]schema.Attribute{
-														"array_of_five": schema.ListNestedAttribute{
-															Computed: true,
-															Optional: true,
-															PlanModifiers: []planmodifier.List{
-																listplanmodifier.RequiresReplaceIfConfigured(),
-																speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
-															},
-															NestedObject: schema.NestedAttributeObject{
-																Validators: []validator.Object{
-																	speakeasy_objectvalidators.NotNull(),
-																},
-																PlanModifiers: []planmodifier.Object{
-																	objectplanmodifier.RequiresReplaceIfConfigured(),
-																	speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-																},
-																Attributes: map[string]schema.Attribute{
-																	"boolean": schema.BoolAttribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.Bool{
-																			boolplanmodifier.RequiresReplaceIfConfigured(),
-																			speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
-																		},
-																		Description: `Requires replacement if changed.`,
-																		Validators: []validator.Bool{
-																			boolvalidator.ConflictsWith(path.Expressions{
-																				path.MatchRelative().AtParent().AtName("str"),
-																				path.MatchRelative().AtParent().AtName("number"),
-																				path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																			}...),
-																		},
-																	},
-																	"dynamic_date_value": schema.StringAttribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.String{
-																			stringplanmodifier.RequiresReplaceIfConfigured(),
-																			speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																		},
-																		Description: `Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.`,
-																		Validators: []validator.String{
-																			stringvalidator.ConflictsWith(path.Expressions{
-																				path.MatchRelative().AtParent().AtName("str"),
-																				path.MatchRelative().AtParent().AtName("number"),
-																				path.MatchRelative().AtParent().AtName("boolean"),
-																			}...),
-																			stringvalidator.OneOf(
-																				"TODAY",
-																				"TOMORROW",
-																				"YESTERDAY",
-																				"IN_THE_FUTURE",
-																				"IN_THE_PAST",
-																				"THIS_WEEK",
-																				"NEXT_WEEK",
-																				"LAST_WEEK",
-																				"THIS_MONTH",
-																				"NEXT_MONTH",
-																				"LAST_MONTH",
-																			),
-																		},
-																	},
-																	"number": schema.Float64Attribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.Float64{
-																			float64planmodifier.RequiresReplaceIfConfigured(),
-																			speakeasy_float64planmodifier.SuppressDiff(speakeasy_float64planmodifier.ExplicitSuppress),
-																		},
-																		Description: `Requires replacement if changed.`,
-																		Validators: []validator.Float64{
-																			float64validator.ConflictsWith(path.Expressions{
-																				path.MatchRelative().AtParent().AtName("str"),
-																				path.MatchRelative().AtParent().AtName("boolean"),
-																				path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																			}...),
-																		},
-																	},
-																	"str": schema.StringAttribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.String{
-																			stringplanmodifier.RequiresReplaceIfConfigured(),
-																			speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																		},
-																		Description: `Requires replacement if changed.`,
-																		Validators: []validator.String{
-																			stringvalidator.ConflictsWith(path.Expressions{
-																				path.MatchRelative().AtParent().AtName("number"),
-																				path.MatchRelative().AtParent().AtName("boolean"),
-																				path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																			}...),
-																		},
-																	},
-																},
-															},
-															Description: `Requires replacement if changed.`,
-															Validators: []validator.List{
-																listvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("str"),
-																	path.MatchRelative().AtParent().AtName("number"),
-																	path.MatchRelative().AtParent().AtName("boolean"),
-																	path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																}...),
-															},
-														},
-														"boolean": schema.BoolAttribute{
-															Computed: true,
-															Optional: true,
-															PlanModifiers: []planmodifier.Bool{
-																boolplanmodifier.RequiresReplaceIfConfigured(),
-																speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
-															},
-															Description: `Requires replacement if changed.`,
-															Validators: []validator.Bool{
-																boolvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("str"),
-																	path.MatchRelative().AtParent().AtName("number"),
-																	path.MatchRelative().AtParent().AtName("array_of_five"),
-																	path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																}...),
-															},
-														},
-														"dynamic_date_value": schema.StringAttribute{
-															Computed: true,
-															Optional: true,
-															PlanModifiers: []planmodifier.String{
-																stringplanmodifier.RequiresReplaceIfConfigured(),
-																speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-															},
-															Description: `Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.`,
-															Validators: []validator.String{
-																stringvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("str"),
-																	path.MatchRelative().AtParent().AtName("number"),
-																	path.MatchRelative().AtParent().AtName("boolean"),
-																	path.MatchRelative().AtParent().AtName("array_of_five"),
-																}...),
-																stringvalidator.OneOf(
-																	"TODAY",
-																	"TOMORROW",
-																	"YESTERDAY",
-																	"IN_THE_FUTURE",
-																	"IN_THE_PAST",
-																	"THIS_WEEK",
-																	"NEXT_WEEK",
-																	"LAST_WEEK",
-																	"THIS_MONTH",
-																	"NEXT_MONTH",
-																	"LAST_MONTH",
-																),
-															},
-														},
-														"number": schema.Float64Attribute{
-															Computed: true,
-															Optional: true,
-															PlanModifiers: []planmodifier.Float64{
-																float64planmodifier.RequiresReplaceIfConfigured(),
-																speakeasy_float64planmodifier.SuppressDiff(speakeasy_float64planmodifier.ExplicitSuppress),
-															},
-															Description: `Requires replacement if changed.`,
-															Validators: []validator.Float64{
-																float64validator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("str"),
-																	path.MatchRelative().AtParent().AtName("boolean"),
-																	path.MatchRelative().AtParent().AtName("array_of_five"),
-																	path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																}...),
-															},
-														},
-														"str": schema.StringAttribute{
-															Computed: true,
-															Optional: true,
-															PlanModifiers: []planmodifier.String{
-																stringplanmodifier.RequiresReplaceIfConfigured(),
-																speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-															},
-															Description: `Requires replacement if changed.`,
-															Validators: []validator.String{
-																stringvalidator.ConflictsWith(path.Expressions{
-																	path.MatchRelative().AtParent().AtName("number"),
-																	path.MatchRelative().AtParent().AtName("boolean"),
-																	path.MatchRelative().AtParent().AtName("array_of_five"),
-																	path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																}...),
-															},
-														},
-													},
-													Description: `The value to compare against - can be a single value (string, number, boolean, or dynamic date) or an array of values. Requires replacement if changed.`,
-												},
-											},
-											Description: `Requires replacement if changed.`,
-											Validators: []validator.Object{
-												objectvalidator.ConflictsWith(path.Expressions{
-													path.MatchRelative().AtParent().AtName("filter_group"),
+													path.MatchRelative().AtParent().AtName("any"),
 												}...),
 											},
 										},
@@ -839,6 +324,21 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 													speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 												},
 												Attributes: map[string]schema.Attribute{
+													"any": schema.StringAttribute{
+														CustomType: jsontypes.NormalizedType{},
+														Computed:   true,
+														Optional:   true,
+														PlanModifiers: []planmodifier.String{
+															stringplanmodifier.RequiresReplaceIfConfigured(),
+															speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
+														},
+														Description: `Requires replacement if changed.; Parsed as JSON.`,
+														Validators: []validator.String{
+															stringvalidator.ConflictsWith(path.Expressions{
+																path.MatchRelative().AtParent().AtName("filter_group"),
+															}...),
+														},
+													},
 													"filter_group": schema.SingleNestedAttribute{
 														Computed: true,
 														Optional: true,
@@ -863,554 +363,25 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 																	),
 																},
 															},
-															"items": schema.ListNestedAttribute{
+															"items": schema.ListAttribute{
 																Computed: true,
 																Optional: true,
 																PlanModifiers: []planmodifier.List{
 																	listplanmodifier.RequiresReplaceIfConfigured(),
 																	speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 																},
-																NestedObject: schema.NestedAttributeObject{
-																	Validators: []validator.Object{
-																		speakeasy_objectvalidators.NotNull(),
-																	},
-																	PlanModifiers: []planmodifier.Object{
-																		objectplanmodifier.RequiresReplaceIfConfigured(),
-																		speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-																	},
-																	Attributes: map[string]schema.Attribute{
-																		"data_type": schema.StringAttribute{
-																			Computed: true,
-																			Optional: true,
-																			PlanModifiers: []planmodifier.String{
-																				stringplanmodifier.RequiresReplaceIfConfigured(),
-																				speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																			},
-																			Description: `The data type of the field. must be one of ["string", "number", "boolean", "date"]; Requires replacement if changed.`,
-																			Validators: []validator.String{
-																				stringvalidator.OneOf(
-																					"string",
-																					"number",
-																					"boolean",
-																					"date",
-																				),
-																			},
-																		},
-																		"key": schema.StringAttribute{
-																			Computed: true,
-																			Optional: true,
-																			PlanModifiers: []planmodifier.String{
-																				stringplanmodifier.RequiresReplaceIfConfigured(),
-																				speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																			},
-																			Description: `The field key to filter on. Not Null; Requires replacement if changed.`,
-																			Validators: []validator.String{
-																				speakeasy_stringvalidators.NotNull(),
-																			},
-																		},
-																		"operator": schema.StringAttribute{
-																			Computed: true,
-																			Optional: true,
-																			PlanModifiers: []planmodifier.String{
-																				stringplanmodifier.RequiresReplaceIfConfigured(),
-																				speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																			},
-																			Description: `The comparison operator for filtering. Not Null; must be one of ["EQUALS", "NOT_EQUALS", "EMPTY", "NOT_EMPTY", "CONTAINS", "NOT_CONTAINS", "IS_ONE_OF", "IS_NONE_OF", "GREATER_THAN", "LESS_THAN", "GREATER_THAN_OR_EQUAL", "LESS_THAN_OR_EQUAL"]; Requires replacement if changed.`,
-																			Validators: []validator.String{
-																				speakeasy_stringvalidators.NotNull(),
-																				stringvalidator.OneOf(
-																					"EQUALS",
-																					"NOT_EQUALS",
-																					"EMPTY",
-																					"NOT_EMPTY",
-																					"CONTAINS",
-																					"NOT_CONTAINS",
-																					"IS_ONE_OF",
-																					"IS_NONE_OF",
-																					"GREATER_THAN",
-																					"LESS_THAN",
-																					"GREATER_THAN_OR_EQUAL",
-																					"LESS_THAN_OR_EQUAL",
-																				),
-																			},
-																		},
-																		"value": schema.SingleNestedAttribute{
-																			Computed: true,
-																			Optional: true,
-																			PlanModifiers: []planmodifier.Object{
-																				objectplanmodifier.RequiresReplaceIfConfigured(),
-																				speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-																			},
-																			Attributes: map[string]schema.Attribute{
-																				"array_of_five": schema.ListNestedAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.List{
-																						listplanmodifier.RequiresReplaceIfConfigured(),
-																						speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
-																					},
-																					NestedObject: schema.NestedAttributeObject{
-																						Validators: []validator.Object{
-																							speakeasy_objectvalidators.NotNull(),
-																						},
-																						PlanModifiers: []planmodifier.Object{
-																							objectplanmodifier.RequiresReplaceIfConfigured(),
-																							speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-																						},
-																						Attributes: map[string]schema.Attribute{
-																							"boolean": schema.BoolAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.Bool{
-																									boolplanmodifier.RequiresReplaceIfConfigured(),
-																									speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
-																								},
-																								Description: `Requires replacement if changed.`,
-																								Validators: []validator.Bool{
-																									boolvalidator.ConflictsWith(path.Expressions{
-																										path.MatchRelative().AtParent().AtName("str"),
-																										path.MatchRelative().AtParent().AtName("number"),
-																										path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																									}...),
-																								},
-																							},
-																							"dynamic_date_value": schema.StringAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.String{
-																									stringplanmodifier.RequiresReplaceIfConfigured(),
-																									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																								},
-																								Description: `Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.`,
-																								Validators: []validator.String{
-																									stringvalidator.ConflictsWith(path.Expressions{
-																										path.MatchRelative().AtParent().AtName("str"),
-																										path.MatchRelative().AtParent().AtName("number"),
-																										path.MatchRelative().AtParent().AtName("boolean"),
-																									}...),
-																									stringvalidator.OneOf(
-																										"TODAY",
-																										"TOMORROW",
-																										"YESTERDAY",
-																										"IN_THE_FUTURE",
-																										"IN_THE_PAST",
-																										"THIS_WEEK",
-																										"NEXT_WEEK",
-																										"LAST_WEEK",
-																										"THIS_MONTH",
-																										"NEXT_MONTH",
-																										"LAST_MONTH",
-																									),
-																								},
-																							},
-																							"number": schema.Float64Attribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.Float64{
-																									float64planmodifier.RequiresReplaceIfConfigured(),
-																									speakeasy_float64planmodifier.SuppressDiff(speakeasy_float64planmodifier.ExplicitSuppress),
-																								},
-																								Description: `Requires replacement if changed.`,
-																								Validators: []validator.Float64{
-																									float64validator.ConflictsWith(path.Expressions{
-																										path.MatchRelative().AtParent().AtName("str"),
-																										path.MatchRelative().AtParent().AtName("boolean"),
-																										path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																									}...),
-																								},
-																							},
-																							"str": schema.StringAttribute{
-																								Computed: true,
-																								Optional: true,
-																								PlanModifiers: []planmodifier.String{
-																									stringplanmodifier.RequiresReplaceIfConfigured(),
-																									speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																								},
-																								Description: `Requires replacement if changed.`,
-																								Validators: []validator.String{
-																									stringvalidator.ConflictsWith(path.Expressions{
-																										path.MatchRelative().AtParent().AtName("number"),
-																										path.MatchRelative().AtParent().AtName("boolean"),
-																										path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																									}...),
-																								},
-																							},
-																						},
-																					},
-																					Description: `Requires replacement if changed.`,
-																					Validators: []validator.List{
-																						listvalidator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("str"),
-																							path.MatchRelative().AtParent().AtName("number"),
-																							path.MatchRelative().AtParent().AtName("boolean"),
-																							path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																						}...),
-																					},
-																				},
-																				"boolean": schema.BoolAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.Bool{
-																						boolplanmodifier.RequiresReplaceIfConfigured(),
-																						speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
-																					},
-																					Description: `Requires replacement if changed.`,
-																					Validators: []validator.Bool{
-																						boolvalidator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("str"),
-																							path.MatchRelative().AtParent().AtName("number"),
-																							path.MatchRelative().AtParent().AtName("array_of_five"),
-																							path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																						}...),
-																					},
-																				},
-																				"dynamic_date_value": schema.StringAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.String{
-																						stringplanmodifier.RequiresReplaceIfConfigured(),
-																						speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																					},
-																					Description: `Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.`,
-																					Validators: []validator.String{
-																						stringvalidator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("str"),
-																							path.MatchRelative().AtParent().AtName("number"),
-																							path.MatchRelative().AtParent().AtName("boolean"),
-																							path.MatchRelative().AtParent().AtName("array_of_five"),
-																						}...),
-																						stringvalidator.OneOf(
-																							"TODAY",
-																							"TOMORROW",
-																							"YESTERDAY",
-																							"IN_THE_FUTURE",
-																							"IN_THE_PAST",
-																							"THIS_WEEK",
-																							"NEXT_WEEK",
-																							"LAST_WEEK",
-																							"THIS_MONTH",
-																							"NEXT_MONTH",
-																							"LAST_MONTH",
-																						),
-																					},
-																				},
-																				"number": schema.Float64Attribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.Float64{
-																						float64planmodifier.RequiresReplaceIfConfigured(),
-																						speakeasy_float64planmodifier.SuppressDiff(speakeasy_float64planmodifier.ExplicitSuppress),
-																					},
-																					Description: `Requires replacement if changed.`,
-																					Validators: []validator.Float64{
-																						float64validator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("str"),
-																							path.MatchRelative().AtParent().AtName("boolean"),
-																							path.MatchRelative().AtParent().AtName("array_of_five"),
-																							path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																						}...),
-																					},
-																				},
-																				"str": schema.StringAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.String{
-																						stringplanmodifier.RequiresReplaceIfConfigured(),
-																						speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																					},
-																					Description: `Requires replacement if changed.`,
-																					Validators: []validator.String{
-																						stringvalidator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("number"),
-																							path.MatchRelative().AtParent().AtName("boolean"),
-																							path.MatchRelative().AtParent().AtName("array_of_five"),
-																							path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																						}...),
-																					},
-																				},
-																			},
-																			Description: `The value to compare against - can be a single value (string, number, boolean, or dynamic date) or an array of values. Requires replacement if changed.`,
-																		},
-																	},
-																},
+																ElementType: jsontypes.NormalizedType{},
 																Description: `Not Null; Requires replacement if changed.`,
 																Validators: []validator.List{
 																	speakeasy_listvalidators.NotNull(),
+																	listvalidator.ValueStringsAre(validators.IsValidJSON()),
 																},
 															},
 														},
 														Description: `Requires replacement if changed.`,
 														Validators: []validator.Object{
 															objectvalidator.ConflictsWith(path.Expressions{
-																path.MatchRelative().AtParent().AtName("filter_item"),
-															}...),
-														},
-													},
-													"filter_item": schema.SingleNestedAttribute{
-														Computed: true,
-														Optional: true,
-														PlanModifiers: []planmodifier.Object{
-															objectplanmodifier.RequiresReplaceIfConfigured(),
-															speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-														},
-														Attributes: map[string]schema.Attribute{
-															"data_type": schema.StringAttribute{
-																Computed: true,
-																Optional: true,
-																PlanModifiers: []planmodifier.String{
-																	stringplanmodifier.RequiresReplaceIfConfigured(),
-																	speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																},
-																Description: `The data type of the field. must be one of ["string", "number", "boolean", "date"]; Requires replacement if changed.`,
-																Validators: []validator.String{
-																	stringvalidator.OneOf(
-																		"string",
-																		"number",
-																		"boolean",
-																		"date",
-																	),
-																},
-															},
-															"key": schema.StringAttribute{
-																Computed: true,
-																Optional: true,
-																PlanModifiers: []planmodifier.String{
-																	stringplanmodifier.RequiresReplaceIfConfigured(),
-																	speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																},
-																Description: `The field key to filter on. Not Null; Requires replacement if changed.`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																},
-															},
-															"operator": schema.StringAttribute{
-																Computed: true,
-																Optional: true,
-																PlanModifiers: []planmodifier.String{
-																	stringplanmodifier.RequiresReplaceIfConfigured(),
-																	speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																},
-																Description: `The comparison operator for filtering. Not Null; must be one of ["EQUALS", "NOT_EQUALS", "EMPTY", "NOT_EMPTY", "CONTAINS", "NOT_CONTAINS", "IS_ONE_OF", "IS_NONE_OF", "GREATER_THAN", "LESS_THAN", "GREATER_THAN_OR_EQUAL", "LESS_THAN_OR_EQUAL"]; Requires replacement if changed.`,
-																Validators: []validator.String{
-																	speakeasy_stringvalidators.NotNull(),
-																	stringvalidator.OneOf(
-																		"EQUALS",
-																		"NOT_EQUALS",
-																		"EMPTY",
-																		"NOT_EMPTY",
-																		"CONTAINS",
-																		"NOT_CONTAINS",
-																		"IS_ONE_OF",
-																		"IS_NONE_OF",
-																		"GREATER_THAN",
-																		"LESS_THAN",
-																		"GREATER_THAN_OR_EQUAL",
-																		"LESS_THAN_OR_EQUAL",
-																	),
-																},
-															},
-															"value": schema.SingleNestedAttribute{
-																Computed: true,
-																Optional: true,
-																PlanModifiers: []planmodifier.Object{
-																	objectplanmodifier.RequiresReplaceIfConfigured(),
-																	speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-																},
-																Attributes: map[string]schema.Attribute{
-																	"array_of_five": schema.ListNestedAttribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.List{
-																			listplanmodifier.RequiresReplaceIfConfigured(),
-																			speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
-																		},
-																		NestedObject: schema.NestedAttributeObject{
-																			Validators: []validator.Object{
-																				speakeasy_objectvalidators.NotNull(),
-																			},
-																			PlanModifiers: []planmodifier.Object{
-																				objectplanmodifier.RequiresReplaceIfConfigured(),
-																				speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
-																			},
-																			Attributes: map[string]schema.Attribute{
-																				"boolean": schema.BoolAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.Bool{
-																						boolplanmodifier.RequiresReplaceIfConfigured(),
-																						speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
-																					},
-																					Description: `Requires replacement if changed.`,
-																					Validators: []validator.Bool{
-																						boolvalidator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("str"),
-																							path.MatchRelative().AtParent().AtName("number"),
-																							path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																						}...),
-																					},
-																				},
-																				"dynamic_date_value": schema.StringAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.String{
-																						stringplanmodifier.RequiresReplaceIfConfigured(),
-																						speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																					},
-																					Description: `Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.`,
-																					Validators: []validator.String{
-																						stringvalidator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("str"),
-																							path.MatchRelative().AtParent().AtName("number"),
-																							path.MatchRelative().AtParent().AtName("boolean"),
-																						}...),
-																						stringvalidator.OneOf(
-																							"TODAY",
-																							"TOMORROW",
-																							"YESTERDAY",
-																							"IN_THE_FUTURE",
-																							"IN_THE_PAST",
-																							"THIS_WEEK",
-																							"NEXT_WEEK",
-																							"LAST_WEEK",
-																							"THIS_MONTH",
-																							"NEXT_MONTH",
-																							"LAST_MONTH",
-																						),
-																					},
-																				},
-																				"number": schema.Float64Attribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.Float64{
-																						float64planmodifier.RequiresReplaceIfConfigured(),
-																						speakeasy_float64planmodifier.SuppressDiff(speakeasy_float64planmodifier.ExplicitSuppress),
-																					},
-																					Description: `Requires replacement if changed.`,
-																					Validators: []validator.Float64{
-																						float64validator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("str"),
-																							path.MatchRelative().AtParent().AtName("boolean"),
-																							path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																						}...),
-																					},
-																				},
-																				"str": schema.StringAttribute{
-																					Computed: true,
-																					Optional: true,
-																					PlanModifiers: []planmodifier.String{
-																						stringplanmodifier.RequiresReplaceIfConfigured(),
-																						speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																					},
-																					Description: `Requires replacement if changed.`,
-																					Validators: []validator.String{
-																						stringvalidator.ConflictsWith(path.Expressions{
-																							path.MatchRelative().AtParent().AtName("number"),
-																							path.MatchRelative().AtParent().AtName("boolean"),
-																							path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																						}...),
-																					},
-																				},
-																			},
-																		},
-																		Description: `Requires replacement if changed.`,
-																		Validators: []validator.List{
-																			listvalidator.ConflictsWith(path.Expressions{
-																				path.MatchRelative().AtParent().AtName("str"),
-																				path.MatchRelative().AtParent().AtName("number"),
-																				path.MatchRelative().AtParent().AtName("boolean"),
-																				path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																			}...),
-																		},
-																	},
-																	"boolean": schema.BoolAttribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.Bool{
-																			boolplanmodifier.RequiresReplaceIfConfigured(),
-																			speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
-																		},
-																		Description: `Requires replacement if changed.`,
-																		Validators: []validator.Bool{
-																			boolvalidator.ConflictsWith(path.Expressions{
-																				path.MatchRelative().AtParent().AtName("str"),
-																				path.MatchRelative().AtParent().AtName("number"),
-																				path.MatchRelative().AtParent().AtName("array_of_five"),
-																				path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																			}...),
-																		},
-																	},
-																	"dynamic_date_value": schema.StringAttribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.String{
-																			stringplanmodifier.RequiresReplaceIfConfigured(),
-																			speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																		},
-																		Description: `Dynamic date keywords that resolve to actual dates at runtime. must be one of ["TODAY", "TOMORROW", "YESTERDAY", "IN_THE_FUTURE", "IN_THE_PAST", "THIS_WEEK", "NEXT_WEEK", "LAST_WEEK", "THIS_MONTH", "NEXT_MONTH", "LAST_MONTH"]; Requires replacement if changed.`,
-																		Validators: []validator.String{
-																			stringvalidator.ConflictsWith(path.Expressions{
-																				path.MatchRelative().AtParent().AtName("str"),
-																				path.MatchRelative().AtParent().AtName("number"),
-																				path.MatchRelative().AtParent().AtName("boolean"),
-																				path.MatchRelative().AtParent().AtName("array_of_five"),
-																			}...),
-																			stringvalidator.OneOf(
-																				"TODAY",
-																				"TOMORROW",
-																				"YESTERDAY",
-																				"IN_THE_FUTURE",
-																				"IN_THE_PAST",
-																				"THIS_WEEK",
-																				"NEXT_WEEK",
-																				"LAST_WEEK",
-																				"THIS_MONTH",
-																				"NEXT_MONTH",
-																				"LAST_MONTH",
-																			),
-																		},
-																	},
-																	"number": schema.Float64Attribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.Float64{
-																			float64planmodifier.RequiresReplaceIfConfigured(),
-																			speakeasy_float64planmodifier.SuppressDiff(speakeasy_float64planmodifier.ExplicitSuppress),
-																		},
-																		Description: `Requires replacement if changed.`,
-																		Validators: []validator.Float64{
-																			float64validator.ConflictsWith(path.Expressions{
-																				path.MatchRelative().AtParent().AtName("str"),
-																				path.MatchRelative().AtParent().AtName("boolean"),
-																				path.MatchRelative().AtParent().AtName("array_of_five"),
-																				path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																			}...),
-																		},
-																	},
-																	"str": schema.StringAttribute{
-																		Computed: true,
-																		Optional: true,
-																		PlanModifiers: []planmodifier.String{
-																			stringplanmodifier.RequiresReplaceIfConfigured(),
-																			speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-																		},
-																		Description: `Requires replacement if changed.`,
-																		Validators: []validator.String{
-																			stringvalidator.ConflictsWith(path.Expressions{
-																				path.MatchRelative().AtParent().AtName("number"),
-																				path.MatchRelative().AtParent().AtName("boolean"),
-																				path.MatchRelative().AtParent().AtName("array_of_five"),
-																				path.MatchRelative().AtParent().AtName("dynamic_date_value"),
-																			}...),
-																		},
-																	},
-																},
-																Description: `The value to compare against - can be a single value (string, number, boolean, or dynamic date) or an array of values. Requires replacement if changed.`,
-															},
-														},
-														Description: `Requires replacement if changed.`,
-														Validators: []validator.Object{
-															objectvalidator.ConflictsWith(path.Expressions{
-																path.MatchRelative().AtParent().AtName("filter_group"),
+																path.MatchRelative().AtParent().AtName("any"),
 															}...),
 														},
 													},
@@ -1425,13 +396,14 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 									Description: `Requires replacement if changed.`,
 								},
 								"id": schema.StringAttribute{
-									Computed: true,
-									Optional: true,
+									CustomType: jsontypes.NormalizedType{},
+									Computed:   true,
+									Optional:   true,
 									PlanModifiers: []planmodifier.String{
 										stringplanmodifier.RequiresReplaceIfConfigured(),
 										speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 									},
-									Description: `Requires replacement if changed.`,
+									Description: `Requires replacement if changed.; Parsed as JSON.`,
 								},
 								"position": schema.Float64Attribute{
 									Computed: true,
@@ -1491,11 +463,6 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 			"description": schema.StringAttribute{
 				Computed: true,
 				Optional: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-				},
-				Description: `Requires replacement if changed.`,
 			},
 			"id": schema.StringAttribute{
 				Computed: true,
@@ -1515,32 +482,24 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 				},
 				Description: `Requires replacement if changed.`,
 			},
-			"shared_with": schema.ListAttribute{
-				Computed: true,
-				Optional: true,
-				PlanModifiers: []planmodifier.List{
-					listplanmodifier.RequiresReplaceIfConfigured(),
-					speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
-				},
+			"owners": schema.ListAttribute{
+				Computed:    true,
+				Optional:    true,
 				ElementType: types.StringType,
-				Description: `Requires replacement if changed.`,
+				Description: `Array of user IDs who have full ownership rights for this board (view, edit, delete)`,
+			},
+			"shared_with": schema.ListAttribute{
+				Computed:    true,
+				Optional:    true,
+				ElementType: types.StringType,
 			},
 			"shared_with_org": schema.BoolAttribute{
 				Computed: true,
 				Optional: true,
-				PlanModifiers: []planmodifier.Bool{
-					boolplanmodifier.RequiresReplaceIfConfigured(),
-					speakeasy_boolplanmodifier.SuppressDiff(speakeasy_boolplanmodifier.ExplicitSuppress),
-				},
-				Description: `Requires replacement if changed.`,
 			},
 			"title": schema.StringAttribute{
-				Required: true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplaceIfConfigured(),
-					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
-				},
-				Description: `Requires replacement if changed.`,
+				Computed: true,
+				Optional: true,
 			},
 			"updated_at": schema.StringAttribute{
 				Computed: true,
@@ -1665,7 +624,41 @@ func (r *KanbanResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	// Not Implemented; we rely entirely on CREATE API request response
+	request, requestDiags := data.ToOperationsGetKanbanBoardRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res, err := r.client.Kanban.GetKanbanBoard(ctx, *request)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res != nil && res.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res.RawResponse))
+		}
+		return
+	}
+	if res == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
+		return
+	}
+	if res.StatusCode == 404 {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+	if res.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
+		return
+	}
+	if !(res.Board != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedBoard(ctx, res.Board)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -1685,7 +678,43 @@ func (r *KanbanResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	// Not Implemented; all attributes marked as RequiresReplace
+	request, requestDiags := data.ToOperationsPatchKanbanBoardRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res, err := r.client.Kanban.PatchKanbanBoard(ctx, *request)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res != nil && res.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res.RawResponse))
+		}
+		return
+	}
+	if res == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
+		return
+	}
+	if res.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
+		return
+	}
+	if !(res.Board != nil) {
+		resp.Diagnostics.AddError("unexpected response from API. Got an unexpected response body", debugResponse(res.RawResponse))
+		return
+	}
+	resp.Diagnostics.Append(data.RefreshFromSharedBoard(ctx, res.Board)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(refreshPlan(ctx, plan, &data)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
 
 	// Save updated data into Terraform state
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
@@ -1709,9 +738,31 @@ func (r *KanbanResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		return
 	}
 
-	// Not Implemented; entity does not have a configured DELETE operation
+	request, requestDiags := data.ToOperationsDeleteKanbanBoardRequest(ctx)
+	resp.Diagnostics.Append(requestDiags...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	res, err := r.client.Kanban.DeleteKanbanBoard(ctx, *request)
+	if err != nil {
+		resp.Diagnostics.AddError("failure to invoke API", err.Error())
+		if res != nil && res.RawResponse != nil {
+			resp.Diagnostics.AddError("unexpected http request/response", debugResponse(res.RawResponse))
+		}
+		return
+	}
+	if res == nil {
+		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
+		return
+	}
+	if res.StatusCode != 200 {
+		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
+		return
+	}
+
 }
 
 func (r *KanbanResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resp.Diagnostics.AddError("Not Implemented", "No available import state operation is available for resource kanban.")
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), req.ID)...)
 }

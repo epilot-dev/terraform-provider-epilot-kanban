@@ -110,7 +110,9 @@ func (p *EpilotKanbanProvider) Resources(ctx context.Context) []func() resource.
 }
 
 func (p *EpilotKanbanProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{}
+	return []func() datasource.DataSource{
+		NewKanbanDataSource,
+	}
 }
 
 func (p *EpilotKanbanProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {

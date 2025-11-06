@@ -8,11 +8,13 @@ import (
 )
 
 type BoardSummary struct {
-	CreatedAt     *time.Time `json:"created_at,omitempty"`
-	CreatedBy     *string    `json:"created_by,omitempty"`
-	Description   *string    `json:"description,omitempty"`
-	ID            *string    `json:"id,omitempty"`
-	OrgID         *string    `json:"org_id,omitempty"`
+	CreatedAt   *time.Time `json:"created_at,omitempty"`
+	CreatedBy   *string    `json:"created_by,omitempty"`
+	Description *string    `json:"description,omitempty"`
+	ID          *string    `json:"id,omitempty"`
+	OrgID       *string    `json:"org_id,omitempty"`
+	// Array of user IDs who have full ownership rights for this board (view, edit, delete)
+	Owners        []string   `json:"owners,omitempty"`
 	SharedWith    []string   `json:"shared_with,omitempty"`
 	SharedWithOrg *bool      `json:"shared_with_org,omitempty"`
 	Title         *string    `json:"title,omitempty"`
@@ -64,6 +66,13 @@ func (o *BoardSummary) GetOrgID() *string {
 		return nil
 	}
 	return o.OrgID
+}
+
+func (o *BoardSummary) GetOwners() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Owners
 }
 
 func (o *BoardSummary) GetSharedWith() []string {

@@ -4,7 +4,7 @@ package shared
 
 type Swimlane struct {
 	Filter           *BoardFilter `json:"filter,omitempty"`
-	ID               *string      `json:"id,omitempty"`
+	ID               any          `json:"id,omitempty"`
 	Position         *float64     `json:"position,omitempty"`
 	Title            *string      `json:"title,omitempty"`
 	TitleChipVariant *string      `json:"title_chip_variant,omitempty"`
@@ -17,7 +17,7 @@ func (o *Swimlane) GetFilter() *BoardFilter {
 	return o.Filter
 }
 
-func (o *Swimlane) GetID() *string {
+func (o *Swimlane) GetID() any {
 	if o == nil {
 		return nil
 	}

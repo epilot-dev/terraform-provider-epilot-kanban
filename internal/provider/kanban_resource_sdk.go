@@ -4,9 +4,12 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/epilot-dev/terraform-provider-epilot-kanban/internal/provider/typeconvert"
 	tfTypes "github.com/epilot-dev/terraform-provider-epilot-kanban/internal/provider/types"
+	"github.com/epilot-dev/terraform-provider-epilot-kanban/internal/sdk/models/operations"
 	"github.com/epilot-dev/terraform-provider-epilot-kanban/internal/sdk/models/shared"
+	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"time"
@@ -16,213 +19,127 @@ func (r *KanbanResourceModel) RefreshFromSharedBoard(ctx context.Context, resp *
 	var diags diag.Diagnostics
 
 	if resp != nil {
-		if resp.Config.BoardFilter == nil {
-			r.Config.BoardFilter = nil
+		if resp.Config == nil {
+			r.Config = nil
 		} else {
-			r.Config.BoardFilter = &tfTypes.BoardFilter{}
-			r.Config.BoardFilter.Combination = types.StringValue(string(resp.Config.BoardFilter.Combination))
-			r.Config.BoardFilter.Items = []tfTypes.Items{}
-
-			for _, itemsItem := range resp.Config.BoardFilter.Items {
-				var items tfTypes.Items
-
-				if itemsItem.FilterGroup != nil {
-					items.FilterGroup = &tfTypes.FilterGroup{}
-					items.FilterGroup.Combination = types.StringValue(string(itemsItem.FilterGroup.Combination))
-					items.FilterGroup.Items = []tfTypes.FilterItem{}
-
-					for _, itemsItem1 := range itemsItem.FilterGroup.Items {
-						var items1 tfTypes.FilterItem
-
-						if itemsItem1.DataType != nil {
-							items1.DataType = types.StringValue(string(*itemsItem1.DataType))
-						} else {
-							items1.DataType = types.StringNull()
-						}
-						items1.Key = types.StringValue(itemsItem1.Key)
-						items1.Operator = types.StringValue(string(itemsItem1.Operator))
-						if itemsItem1.Value != nil {
-							items1.Value = &tfTypes.ValueType{}
-							if itemsItem1.Value.Str != nil {
-								items1.Value.Str = types.StringPointerValue(itemsItem1.Value.Str)
-							}
-							if itemsItem1.Value.Number != nil {
-								items1.Value.Number = types.Float64PointerValue(itemsItem1.Value.Number)
-							}
-							if itemsItem1.Value.Boolean != nil {
-								items1.Value.Boolean = types.BoolPointerValue(itemsItem1.Value.Boolean)
-							}
-							if itemsItem1.Value.DynamicDateValue != nil {
-								if itemsItem1.Value.DynamicDateValue != nil {
-									items1.Value.DynamicDateValue = types.StringValue(string(*itemsItem1.Value.DynamicDateValue))
-								} else {
-									items1.Value.DynamicDateValue = types.StringNull()
-								}
-							}
-						}
-
-						items.FilterGroup.Items = append(items.FilterGroup.Items, items1)
-					}
-				}
-				if itemsItem.FilterItem != nil {
-					items.FilterItem = &tfTypes.FilterItem{}
-					if itemsItem.FilterItem.DataType != nil {
-						items.FilterItem.DataType = types.StringValue(string(*itemsItem.FilterItem.DataType))
-					} else {
-						items.FilterItem.DataType = types.StringNull()
-					}
-					items.FilterItem.Key = types.StringValue(itemsItem.FilterItem.Key)
-					items.FilterItem.Operator = types.StringValue(string(itemsItem.FilterItem.Operator))
-					if itemsItem.FilterItem.Value != nil {
-						items.FilterItem.Value = &tfTypes.ValueType{}
-						if itemsItem.FilterItem.Value.Str != nil {
-							items.FilterItem.Value.Str = types.StringPointerValue(itemsItem.FilterItem.Value.Str)
-						}
-						if itemsItem.FilterItem.Value.Number != nil {
-							items.FilterItem.Value.Number = types.Float64PointerValue(itemsItem.FilterItem.Value.Number)
-						}
-						if itemsItem.FilterItem.Value.Boolean != nil {
-							items.FilterItem.Value.Boolean = types.BoolPointerValue(itemsItem.FilterItem.Value.Boolean)
-						}
-						if itemsItem.FilterItem.Value.DynamicDateValue != nil {
-							if itemsItem.FilterItem.Value.DynamicDateValue != nil {
-								items.FilterItem.Value.DynamicDateValue = types.StringValue(string(*itemsItem.FilterItem.Value.DynamicDateValue))
-							} else {
-								items.FilterItem.Value.DynamicDateValue = types.StringNull()
-							}
-						}
-					}
-				}
-
-				r.Config.BoardFilter.Items = append(r.Config.BoardFilter.Items, items)
-			}
-		}
-		if resp.Config.CardConfig == nil {
-			r.Config.CardConfig = nil
-		} else {
-			r.Config.CardConfig = &tfTypes.CardConfig{}
-			r.Config.CardConfig.Fields = make([]types.String, 0, len(resp.Config.CardConfig.Fields))
-			for _, v := range resp.Config.CardConfig.Fields {
-				r.Config.CardConfig.Fields = append(r.Config.CardConfig.Fields, types.StringValue(v))
-			}
-		}
-		r.Config.Dataset = types.StringPointerValue(resp.Config.Dataset)
-		r.Config.SearchQuery = types.StringPointerValue(resp.Config.SearchQuery)
-		if resp.Config.Sorting == nil {
-			r.Config.Sorting = nil
-		} else {
-			r.Config.Sorting = &tfTypes.Sorting{}
-			if resp.Config.Sorting.Direction != nil {
-				r.Config.Sorting.Direction = types.StringValue(string(*resp.Config.Sorting.Direction))
+			r.Config = &tfTypes.Config{}
+			if resp.Config.BoardFilter == nil {
+				r.Config.BoardFilter = nil
 			} else {
-				r.Config.Sorting.Direction = types.StringNull()
-			}
-			r.Config.Sorting.Field = types.StringValue(resp.Config.Sorting.Field)
-		}
-		r.Config.Swimlanes = []tfTypes.Swimlane{}
+				r.Config.BoardFilter = &tfTypes.BoardFilter{}
+				r.Config.BoardFilter.Combination = types.StringValue(string(resp.Config.BoardFilter.Combination))
+				r.Config.BoardFilter.Items = []tfTypes.Items{}
 
-		for _, swimlanesItem := range resp.Config.Swimlanes {
-			var swimlanes tfTypes.Swimlane
+				for _, itemsItem := range resp.Config.BoardFilter.Items {
+					var items tfTypes.Items
 
-			if swimlanesItem.Filter == nil {
-				swimlanes.Filter = nil
-			} else {
-				swimlanes.Filter = &tfTypes.BoardFilter{}
-				swimlanes.Filter.Combination = types.StringValue(string(swimlanesItem.Filter.Combination))
-				swimlanes.Filter.Items = []tfTypes.Items{}
-
-				for _, itemsItem2 := range swimlanesItem.Filter.Items {
-					var items2 tfTypes.Items
-
-					if itemsItem2.FilterGroup != nil {
-						items2.FilterGroup = &tfTypes.FilterGroup{}
-						items2.FilterGroup.Combination = types.StringValue(string(itemsItem2.FilterGroup.Combination))
-						items2.FilterGroup.Items = []tfTypes.FilterItem{}
-
-						for _, itemsItem3 := range itemsItem2.FilterGroup.Items {
-							var items3 tfTypes.FilterItem
-
-							if itemsItem3.DataType != nil {
-								items3.DataType = types.StringValue(string(*itemsItem3.DataType))
-							} else {
-								items3.DataType = types.StringNull()
-							}
-							items3.Key = types.StringValue(itemsItem3.Key)
-							items3.Operator = types.StringValue(string(itemsItem3.Operator))
-							if itemsItem3.Value != nil {
-								items3.Value = &tfTypes.ValueType{}
-								if itemsItem3.Value.Str != nil {
-									items3.Value.Str = types.StringPointerValue(itemsItem3.Value.Str)
-								}
-								if itemsItem3.Value.Number != nil {
-									items3.Value.Number = types.Float64PointerValue(itemsItem3.Value.Number)
-								}
-								if itemsItem3.Value.Boolean != nil {
-									items3.Value.Boolean = types.BoolPointerValue(itemsItem3.Value.Boolean)
-								}
-								if itemsItem3.Value.DynamicDateValue != nil {
-									if itemsItem3.Value.DynamicDateValue != nil {
-										items3.Value.DynamicDateValue = types.StringValue(string(*itemsItem3.Value.DynamicDateValue))
-									} else {
-										items3.Value.DynamicDateValue = types.StringNull()
-									}
-								}
-							}
-
-							items2.FilterGroup.Items = append(items2.FilterGroup.Items, items3)
-						}
+					if itemsItem.Any != nil {
+						anyResult, _ := json.Marshal(itemsItem.Any)
+						items.Any = jsontypes.NewNormalizedValue(string(anyResult))
 					}
-					if itemsItem2.FilterItem != nil {
-						items2.FilterItem = &tfTypes.FilterItem{}
-						if itemsItem2.FilterItem.DataType != nil {
-							items2.FilterItem.DataType = types.StringValue(string(*itemsItem2.FilterItem.DataType))
-						} else {
-							items2.FilterItem.DataType = types.StringNull()
-						}
-						items2.FilterItem.Key = types.StringValue(itemsItem2.FilterItem.Key)
-						items2.FilterItem.Operator = types.StringValue(string(itemsItem2.FilterItem.Operator))
-						if itemsItem2.FilterItem.Value != nil {
-							items2.FilterItem.Value = &tfTypes.ValueType{}
-							if itemsItem2.FilterItem.Value.Str != nil {
-								items2.FilterItem.Value.Str = types.StringPointerValue(itemsItem2.FilterItem.Value.Str)
-							}
-							if itemsItem2.FilterItem.Value.Number != nil {
-								items2.FilterItem.Value.Number = types.Float64PointerValue(itemsItem2.FilterItem.Value.Number)
-							}
-							if itemsItem2.FilterItem.Value.Boolean != nil {
-								items2.FilterItem.Value.Boolean = types.BoolPointerValue(itemsItem2.FilterItem.Value.Boolean)
-							}
-							if itemsItem2.FilterItem.Value.DynamicDateValue != nil {
-								if itemsItem2.FilterItem.Value.DynamicDateValue != nil {
-									items2.FilterItem.Value.DynamicDateValue = types.StringValue(string(*itemsItem2.FilterItem.Value.DynamicDateValue))
-								} else {
-									items2.FilterItem.Value.DynamicDateValue = types.StringNull()
-								}
-							}
+					if itemsItem.FilterGroup != nil {
+						items.FilterGroup = &tfTypes.FilterGroup{}
+						items.FilterGroup.Combination = types.StringValue(string(itemsItem.FilterGroup.Combination))
+						items.FilterGroup.Items = make([]jsontypes.Normalized, 0, len(itemsItem.FilterGroup.Items))
+						for _, itemsItem1 := range itemsItem.FilterGroup.Items {
+							var items1 jsontypes.Normalized
+
+							items1Result, _ := json.Marshal(itemsItem1)
+							items1 = jsontypes.NewNormalizedValue(string(items1Result))
+
+							items.FilterGroup.Items = append(items.FilterGroup.Items, items1)
 						}
 					}
 
-					swimlanes.Filter.Items = append(swimlanes.Filter.Items, items2)
+					r.Config.BoardFilter.Items = append(r.Config.BoardFilter.Items, items)
 				}
 			}
-			swimlanes.ID = types.StringPointerValue(swimlanesItem.ID)
-			swimlanes.Position = types.Float64PointerValue(swimlanesItem.Position)
-			swimlanes.Title = types.StringPointerValue(swimlanesItem.Title)
-			swimlanes.TitleChipVariant = types.StringPointerValue(swimlanesItem.TitleChipVariant)
+			if resp.Config.CardConfig == nil {
+				r.Config.CardConfig = nil
+			} else {
+				r.Config.CardConfig = &tfTypes.CardConfig{}
+				r.Config.CardConfig.Fields = make([]types.String, 0, len(resp.Config.CardConfig.Fields))
+				for _, v := range resp.Config.CardConfig.Fields {
+					r.Config.CardConfig.Fields = append(r.Config.CardConfig.Fields, types.StringValue(v))
+				}
+			}
+			r.Config.Dataset = types.StringPointerValue(resp.Config.Dataset)
+			r.Config.SearchQuery = types.StringPointerValue(resp.Config.SearchQuery)
+			if resp.Config.Sorting == nil {
+				r.Config.Sorting = nil
+			} else {
+				r.Config.Sorting = &tfTypes.Sorting{}
+				if resp.Config.Sorting.Direction != nil {
+					r.Config.Sorting.Direction = types.StringValue(string(*resp.Config.Sorting.Direction))
+				} else {
+					r.Config.Sorting.Direction = types.StringNull()
+				}
+				r.Config.Sorting.Field = types.StringValue(resp.Config.Sorting.Field)
+			}
+			r.Config.Swimlanes = []tfTypes.Swimlane{}
 
-			r.Config.Swimlanes = append(r.Config.Swimlanes, swimlanes)
+			for _, swimlanesItem := range resp.Config.Swimlanes {
+				var swimlanes tfTypes.Swimlane
+
+				if swimlanesItem.Filter == nil {
+					swimlanes.Filter = nil
+				} else {
+					swimlanes.Filter = &tfTypes.BoardFilter{}
+					swimlanes.Filter.Combination = types.StringValue(string(swimlanesItem.Filter.Combination))
+					swimlanes.Filter.Items = []tfTypes.Items{}
+
+					for _, itemsItem2 := range swimlanesItem.Filter.Items {
+						var items2 tfTypes.Items
+
+						if itemsItem2.Any != nil {
+							anyResult1, _ := json.Marshal(itemsItem2.Any)
+							items2.Any = jsontypes.NewNormalizedValue(string(anyResult1))
+						}
+						if itemsItem2.FilterGroup != nil {
+							items2.FilterGroup = &tfTypes.FilterGroup{}
+							items2.FilterGroup.Combination = types.StringValue(string(itemsItem2.FilterGroup.Combination))
+							items2.FilterGroup.Items = make([]jsontypes.Normalized, 0, len(itemsItem2.FilterGroup.Items))
+							for _, itemsItem3 := range itemsItem2.FilterGroup.Items {
+								var items3 jsontypes.Normalized
+
+								items3Result, _ := json.Marshal(itemsItem3)
+								items3 = jsontypes.NewNormalizedValue(string(items3Result))
+
+								items2.FilterGroup.Items = append(items2.FilterGroup.Items, items3)
+							}
+						}
+
+						swimlanes.Filter.Items = append(swimlanes.Filter.Items, items2)
+					}
+				}
+				if swimlanesItem.ID == nil {
+					swimlanes.ID = jsontypes.NewNormalizedNull()
+				} else {
+					idResult, _ := json.Marshal(swimlanesItem.ID)
+					swimlanes.ID = jsontypes.NewNormalizedValue(string(idResult))
+				}
+				swimlanes.Position = types.Float64PointerValue(swimlanesItem.Position)
+				swimlanes.Title = types.StringPointerValue(swimlanesItem.Title)
+				swimlanes.TitleChipVariant = types.StringPointerValue(swimlanesItem.TitleChipVariant)
+
+				r.Config.Swimlanes = append(r.Config.Swimlanes, swimlanes)
+			}
 		}
 		r.CreatedAt = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.CreatedAt))
 		r.CreatedBy = types.StringPointerValue(resp.CreatedBy)
 		r.Description = types.StringPointerValue(resp.Description)
 		r.ID = types.StringPointerValue(resp.ID)
 		r.OrgID = types.StringPointerValue(resp.OrgID)
+		r.Owners = make([]types.String, 0, len(resp.Owners))
+		for _, v := range resp.Owners {
+			r.Owners = append(r.Owners, types.StringValue(v))
+		}
 		r.SharedWith = make([]types.String, 0, len(resp.SharedWith))
 		for _, v := range resp.SharedWith {
 			r.SharedWith = append(r.SharedWith, types.StringValue(v))
 		}
 		r.SharedWithOrg = types.BoolPointerValue(resp.SharedWithOrg)
-		r.Title = types.StringValue(resp.Title)
+		r.Title = types.StringPointerValue(resp.Title)
 		r.UpdatedAt = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.UpdatedAt))
 		r.UpdatedBy = types.StringPointerValue(resp.UpdatedBy)
 	}
@@ -230,506 +147,244 @@ func (r *KanbanResourceModel) RefreshFromSharedBoard(ctx context.Context, resp *
 	return diags
 }
 
+func (r *KanbanResourceModel) ToOperationsDeleteKanbanBoardRequest(ctx context.Context) (*operations.DeleteKanbanBoardRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var boardID string
+	boardID = r.ID.ValueString()
+
+	out := operations.DeleteKanbanBoardRequest{
+		BoardID: boardID,
+	}
+
+	return &out, diags
+}
+
+func (r *KanbanResourceModel) ToOperationsGetKanbanBoardRequest(ctx context.Context) (*operations.GetKanbanBoardRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	var boardID string
+	boardID = r.ID.ValueString()
+
+	out := operations.GetKanbanBoardRequest{
+		BoardID: boardID,
+	}
+
+	return &out, diags
+}
+
+func (r *KanbanResourceModel) ToOperationsPatchKanbanBoardRequest(ctx context.Context) (*operations.PatchKanbanBoardRequest, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	requestBody, requestBodyDiags := r.ToOperationsPatchKanbanBoardRequestBody(ctx)
+	diags.Append(requestBodyDiags...)
+
+	if diags.HasError() {
+		return nil, diags
+	}
+
+	var boardID string
+	boardID = r.ID.ValueString()
+
+	out := operations.PatchKanbanBoardRequest{
+		RequestBody: requestBody,
+		BoardID:     boardID,
+	}
+
+	return &out, diags
+}
+
+func (r *KanbanResourceModel) ToOperationsPatchKanbanBoardRequestBody(ctx context.Context) (*operations.PatchKanbanBoardRequestBody, diag.Diagnostics) {
+	var diags diag.Diagnostics
+
+	description := new(string)
+	if !r.Description.IsUnknown() && !r.Description.IsNull() {
+		*description = r.Description.ValueString()
+	} else {
+		description = nil
+	}
+	owners := make([]string, 0, len(r.Owners))
+	for _, ownersItem := range r.Owners {
+		owners = append(owners, ownersItem.ValueString())
+	}
+	sharedWith := make([]string, 0, len(r.SharedWith))
+	for _, sharedWithItem := range r.SharedWith {
+		sharedWith = append(sharedWith, sharedWithItem.ValueString())
+	}
+	sharedWithOrg := new(bool)
+	if !r.SharedWithOrg.IsUnknown() && !r.SharedWithOrg.IsNull() {
+		*sharedWithOrg = r.SharedWithOrg.ValueBool()
+	} else {
+		sharedWithOrg = nil
+	}
+	title := new(string)
+	if !r.Title.IsUnknown() && !r.Title.IsNull() {
+		*title = r.Title.ValueString()
+	} else {
+		title = nil
+	}
+	out := operations.PatchKanbanBoardRequestBody{
+		Description:   description,
+		Owners:        owners,
+		SharedWith:    sharedWith,
+		SharedWithOrg: sharedWithOrg,
+		Title:         title,
+	}
+
+	return &out, diags
+}
+
 func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
-	var boardFilter *shared.BoardFilter
-	if r.Config.BoardFilter != nil {
-		combination := shared.Combination(r.Config.BoardFilter.Combination.ValueString())
-		items := make([]shared.Items, 0, len(r.Config.BoardFilter.Items))
-		for _, itemsItem := range r.Config.BoardFilter.Items {
-			if itemsItem.FilterItem != nil {
-				dataType := new(shared.DataType)
-				if !itemsItem.FilterItem.DataType.IsUnknown() && !itemsItem.FilterItem.DataType.IsNull() {
-					*dataType = shared.DataType(itemsItem.FilterItem.DataType.ValueString())
-				} else {
-					dataType = nil
-				}
-				var key string
-				key = itemsItem.FilterItem.Key.ValueString()
-
-				operator := shared.FilterOperator(itemsItem.FilterItem.Operator.ValueString())
-				var value *shared.ValueType
-				if itemsItem.FilterItem.Value != nil {
-					str := new(string)
-					if !itemsItem.FilterItem.Value.Str.IsUnknown() && !itemsItem.FilterItem.Value.Str.IsNull() {
-						*str = itemsItem.FilterItem.Value.Str.ValueString()
-					} else {
-						str = nil
-					}
-					if str != nil {
-						value = &shared.ValueType{
-							Str: str,
-						}
-					}
-					dynamicDateValue := new(shared.DynamicDateValue)
-					if !itemsItem.FilterItem.Value.DynamicDateValue.IsUnknown() && !itemsItem.FilterItem.Value.DynamicDateValue.IsNull() {
-						*dynamicDateValue = shared.DynamicDateValue(itemsItem.FilterItem.Value.DynamicDateValue.ValueString())
-					} else {
-						dynamicDateValue = nil
-					}
-					if dynamicDateValue != nil {
-						value = &shared.ValueType{
-							DynamicDateValue: dynamicDateValue,
-						}
-					}
-					number := new(float64)
-					if !itemsItem.FilterItem.Value.Number.IsUnknown() && !itemsItem.FilterItem.Value.Number.IsNull() {
-						*number = itemsItem.FilterItem.Value.Number.ValueFloat64()
-					} else {
-						number = nil
-					}
-					if number != nil {
-						value = &shared.ValueType{
-							Number: number,
-						}
-					}
-					boolean := new(bool)
-					if !itemsItem.FilterItem.Value.Boolean.IsUnknown() && !itemsItem.FilterItem.Value.Boolean.IsNull() {
-						*boolean = itemsItem.FilterItem.Value.Boolean.ValueBool()
-					} else {
-						boolean = nil
-					}
-					if boolean != nil {
-						value = &shared.ValueType{
-							Boolean: boolean,
-						}
-					}
-					var arrayOfFive []shared.Five
-					if itemsItem.FilterItem.Value.ArrayOfFive != nil {
-						arrayOfFive = make([]shared.Five, 0, len(itemsItem.FilterItem.Value.ArrayOfFive))
-						for _, arrayOfFiveItem := range itemsItem.FilterItem.Value.ArrayOfFive {
-							if !arrayOfFiveItem.Str.IsUnknown() && !arrayOfFiveItem.Str.IsNull() {
-								var str1 string
-								str1 = arrayOfFiveItem.Str.ValueString()
-
-								arrayOfFive = append(arrayOfFive, shared.Five{
-									Str: &str1,
-								})
-							}
-							if !arrayOfFiveItem.DynamicDateValue.IsUnknown() && !arrayOfFiveItem.DynamicDateValue.IsNull() {
-								dynamicDateValue1 := shared.DynamicDateValue(arrayOfFiveItem.DynamicDateValue.ValueString())
-								arrayOfFive = append(arrayOfFive, shared.Five{
-									DynamicDateValue: &dynamicDateValue1,
-								})
-							}
-							if !arrayOfFiveItem.Number.IsUnknown() && !arrayOfFiveItem.Number.IsNull() {
-								var number1 float64
-								number1 = arrayOfFiveItem.Number.ValueFloat64()
-
-								arrayOfFive = append(arrayOfFive, shared.Five{
-									Number: &number1,
-								})
-							}
-							if !arrayOfFiveItem.Boolean.IsUnknown() && !arrayOfFiveItem.Boolean.IsNull() {
-								var boolean1 bool
-								boolean1 = arrayOfFiveItem.Boolean.ValueBool()
-
-								arrayOfFive = append(arrayOfFive, shared.Five{
-									Boolean: &boolean1,
-								})
-							}
-						}
-					}
-				}
-				filterItem := shared.FilterItem{
-					DataType: dataType,
-					Key:      key,
-					Operator: operator,
-					Value:    value,
-				}
-				items = append(items, shared.Items{
-					FilterItem: &filterItem,
-				})
-			}
-			if itemsItem.FilterGroup != nil {
-				combination1 := shared.FilterGroupCombination(itemsItem.FilterGroup.Combination.ValueString())
-				items1 := make([]shared.FilterItem, 0, len(itemsItem.FilterGroup.Items))
-				for _, itemsItem1 := range itemsItem.FilterGroup.Items {
-					dataType1 := new(shared.DataType)
-					if !itemsItem1.DataType.IsUnknown() && !itemsItem1.DataType.IsNull() {
-						*dataType1 = shared.DataType(itemsItem1.DataType.ValueString())
-					} else {
-						dataType1 = nil
-					}
-					var key1 string
-					key1 = itemsItem1.Key.ValueString()
-
-					operator1 := shared.FilterOperator(itemsItem1.Operator.ValueString())
-					var value1 *shared.ValueType
-					if itemsItem1.Value != nil {
-						str2 := new(string)
-						if !itemsItem1.Value.Str.IsUnknown() && !itemsItem1.Value.Str.IsNull() {
-							*str2 = itemsItem1.Value.Str.ValueString()
-						} else {
-							str2 = nil
-						}
-						if str2 != nil {
-							value1 = &shared.ValueType{
-								Str: str2,
-							}
-						}
-						dynamicDateValue2 := new(shared.DynamicDateValue)
-						if !itemsItem1.Value.DynamicDateValue.IsUnknown() && !itemsItem1.Value.DynamicDateValue.IsNull() {
-							*dynamicDateValue2 = shared.DynamicDateValue(itemsItem1.Value.DynamicDateValue.ValueString())
-						} else {
-							dynamicDateValue2 = nil
-						}
-						if dynamicDateValue2 != nil {
-							value1 = &shared.ValueType{
-								DynamicDateValue: dynamicDateValue2,
-							}
-						}
-						number2 := new(float64)
-						if !itemsItem1.Value.Number.IsUnknown() && !itemsItem1.Value.Number.IsNull() {
-							*number2 = itemsItem1.Value.Number.ValueFloat64()
-						} else {
-							number2 = nil
-						}
-						if number2 != nil {
-							value1 = &shared.ValueType{
-								Number: number2,
-							}
-						}
-						boolean2 := new(bool)
-						if !itemsItem1.Value.Boolean.IsUnknown() && !itemsItem1.Value.Boolean.IsNull() {
-							*boolean2 = itemsItem1.Value.Boolean.ValueBool()
-						} else {
-							boolean2 = nil
-						}
-						if boolean2 != nil {
-							value1 = &shared.ValueType{
-								Boolean: boolean2,
-							}
-						}
-					}
-					items1 = append(items1, shared.FilterItem{
-						DataType: dataType1,
-						Key:      key1,
-						Operator: operator1,
-						Value:    value1,
+	var config *shared.Config
+	if r.Config != nil {
+		var boardFilter *shared.BoardFilter
+		if r.Config.BoardFilter != nil {
+			combination := shared.Combination(r.Config.BoardFilter.Combination.ValueString())
+			items := make([]shared.Items, 0, len(r.Config.BoardFilter.Items))
+			for _, itemsItem := range r.Config.BoardFilter.Items {
+				if !itemsItem.Any.IsUnknown() && !itemsItem.Any.IsNull() {
+					var anyVar interface{}
+					_ = json.Unmarshal([]byte(itemsItem.Any.ValueString()), &anyVar)
+					items = append(items, shared.Items{
+						Any: &anyVar,
 					})
 				}
-				filterGroup := shared.FilterGroup{
-					Combination: combination1,
-					Items:       items1,
+				if itemsItem.FilterGroup != nil {
+					combination1 := shared.FilterGroupCombination(itemsItem.FilterGroup.Combination.ValueString())
+					items1 := make([]interface{}, 0, len(itemsItem.FilterGroup.Items))
+					for _, itemsItem1 := range itemsItem.FilterGroup.Items {
+						var itemsTmp interface{}
+						_ = json.Unmarshal([]byte(itemsItem1.ValueString()), &itemsTmp)
+						items1 = append(items1, itemsTmp)
+					}
+					filterGroup := shared.FilterGroup{
+						Combination: combination1,
+						Items:       items1,
+					}
+					items = append(items, shared.Items{
+						FilterGroup: &filterGroup,
+					})
 				}
-				items = append(items, shared.Items{
-					FilterGroup: &filterGroup,
-				})
+			}
+			boardFilter = &shared.BoardFilter{
+				Combination: combination,
+				Items:       items,
 			}
 		}
-		boardFilter = &shared.BoardFilter{
-			Combination: combination,
-			Items:       items,
+		var cardConfig *shared.CardConfig
+		if r.Config.CardConfig != nil {
+			fields := make([]string, 0, len(r.Config.CardConfig.Fields))
+			for _, fieldsItem := range r.Config.CardConfig.Fields {
+				fields = append(fields, fieldsItem.ValueString())
+			}
+			cardConfig = &shared.CardConfig{
+				Fields: fields,
+			}
 		}
-	}
-	var cardConfig *shared.CardConfig
-	if r.Config.CardConfig != nil {
-		fields := make([]string, 0, len(r.Config.CardConfig.Fields))
-		for _, fieldsItem := range r.Config.CardConfig.Fields {
-			fields = append(fields, fieldsItem.ValueString())
-		}
-		cardConfig = &shared.CardConfig{
-			Fields: fields,
-		}
-	}
-	dataset := new(string)
-	if !r.Config.Dataset.IsUnknown() && !r.Config.Dataset.IsNull() {
-		*dataset = r.Config.Dataset.ValueString()
-	} else {
-		dataset = nil
-	}
-	searchQuery := new(string)
-	if !r.Config.SearchQuery.IsUnknown() && !r.Config.SearchQuery.IsNull() {
-		*searchQuery = r.Config.SearchQuery.ValueString()
-	} else {
-		searchQuery = nil
-	}
-	var sorting *shared.Sorting
-	if r.Config.Sorting != nil {
-		direction := new(shared.Direction)
-		if !r.Config.Sorting.Direction.IsUnknown() && !r.Config.Sorting.Direction.IsNull() {
-			*direction = shared.Direction(r.Config.Sorting.Direction.ValueString())
+		dataset := new(string)
+		if !r.Config.Dataset.IsUnknown() && !r.Config.Dataset.IsNull() {
+			*dataset = r.Config.Dataset.ValueString()
 		} else {
-			direction = nil
+			dataset = nil
 		}
-		var field string
-		field = r.Config.Sorting.Field.ValueString()
-
-		sorting = &shared.Sorting{
-			Direction: direction,
-			Field:     field,
+		searchQuery := new(string)
+		if !r.Config.SearchQuery.IsUnknown() && !r.Config.SearchQuery.IsNull() {
+			*searchQuery = r.Config.SearchQuery.ValueString()
+		} else {
+			searchQuery = nil
 		}
-	}
-	swimlanes := make([]shared.Swimlane, 0, len(r.Config.Swimlanes))
-	for _, swimlanesItem := range r.Config.Swimlanes {
-		var filter *shared.BoardFilter
-		if swimlanesItem.Filter != nil {
-			combination2 := shared.Combination(swimlanesItem.Filter.Combination.ValueString())
-			items2 := make([]shared.Items, 0, len(swimlanesItem.Filter.Items))
-			for _, itemsItem2 := range swimlanesItem.Filter.Items {
-				if itemsItem2.FilterItem != nil {
-					dataType2 := new(shared.DataType)
-					if !itemsItem2.FilterItem.DataType.IsUnknown() && !itemsItem2.FilterItem.DataType.IsNull() {
-						*dataType2 = shared.DataType(itemsItem2.FilterItem.DataType.ValueString())
-					} else {
-						dataType2 = nil
-					}
-					var key2 string
-					key2 = itemsItem2.FilterItem.Key.ValueString()
+		var sorting *shared.Sorting
+		if r.Config.Sorting != nil {
+			direction := new(shared.Direction)
+			if !r.Config.Sorting.Direction.IsUnknown() && !r.Config.Sorting.Direction.IsNull() {
+				*direction = shared.Direction(r.Config.Sorting.Direction.ValueString())
+			} else {
+				direction = nil
+			}
+			var field string
+			field = r.Config.Sorting.Field.ValueString()
 
-					operator2 := shared.FilterOperator(itemsItem2.FilterItem.Operator.ValueString())
-					var value2 *shared.ValueType
-					if itemsItem2.FilterItem.Value != nil {
-						str4 := new(string)
-						if !itemsItem2.FilterItem.Value.Str.IsUnknown() && !itemsItem2.FilterItem.Value.Str.IsNull() {
-							*str4 = itemsItem2.FilterItem.Value.Str.ValueString()
-						} else {
-							str4 = nil
-						}
-						if str4 != nil {
-							value2 = &shared.ValueType{
-								Str: str4,
-							}
-						}
-						dynamicDateValue4 := new(shared.DynamicDateValue)
-						if !itemsItem2.FilterItem.Value.DynamicDateValue.IsUnknown() && !itemsItem2.FilterItem.Value.DynamicDateValue.IsNull() {
-							*dynamicDateValue4 = shared.DynamicDateValue(itemsItem2.FilterItem.Value.DynamicDateValue.ValueString())
-						} else {
-							dynamicDateValue4 = nil
-						}
-						if dynamicDateValue4 != nil {
-							value2 = &shared.ValueType{
-								DynamicDateValue: dynamicDateValue4,
-							}
-						}
-						number4 := new(float64)
-						if !itemsItem2.FilterItem.Value.Number.IsUnknown() && !itemsItem2.FilterItem.Value.Number.IsNull() {
-							*number4 = itemsItem2.FilterItem.Value.Number.ValueFloat64()
-						} else {
-							number4 = nil
-						}
-						if number4 != nil {
-							value2 = &shared.ValueType{
-								Number: number4,
-							}
-						}
-						boolean4 := new(bool)
-						if !itemsItem2.FilterItem.Value.Boolean.IsUnknown() && !itemsItem2.FilterItem.Value.Boolean.IsNull() {
-							*boolean4 = itemsItem2.FilterItem.Value.Boolean.ValueBool()
-						} else {
-							boolean4 = nil
-						}
-						if boolean4 != nil {
-							value2 = &shared.ValueType{
-								Boolean: boolean4,
-							}
-						}
-						var arrayOfFive2 []shared.Five
-						if itemsItem2.FilterItem.Value.ArrayOfFive != nil {
-							arrayOfFive2 = make([]shared.Five, 0, len(itemsItem2.FilterItem.Value.ArrayOfFive))
-							for _, arrayOfFiveItem2 := range itemsItem2.FilterItem.Value.ArrayOfFive {
-								if !arrayOfFiveItem2.Str.IsUnknown() && !arrayOfFiveItem2.Str.IsNull() {
-									var str5 string
-									str5 = arrayOfFiveItem2.Str.ValueString()
-
-									arrayOfFive2 = append(arrayOfFive2, shared.Five{
-										Str: &str5,
-									})
-								}
-								if !arrayOfFiveItem2.DynamicDateValue.IsUnknown() && !arrayOfFiveItem2.DynamicDateValue.IsNull() {
-									dynamicDateValue5 := shared.DynamicDateValue(arrayOfFiveItem2.DynamicDateValue.ValueString())
-									arrayOfFive2 = append(arrayOfFive2, shared.Five{
-										DynamicDateValue: &dynamicDateValue5,
-									})
-								}
-								if !arrayOfFiveItem2.Number.IsUnknown() && !arrayOfFiveItem2.Number.IsNull() {
-									var number5 float64
-									number5 = arrayOfFiveItem2.Number.ValueFloat64()
-
-									arrayOfFive2 = append(arrayOfFive2, shared.Five{
-										Number: &number5,
-									})
-								}
-								if !arrayOfFiveItem2.Boolean.IsUnknown() && !arrayOfFiveItem2.Boolean.IsNull() {
-									var boolean5 bool
-									boolean5 = arrayOfFiveItem2.Boolean.ValueBool()
-
-									arrayOfFive2 = append(arrayOfFive2, shared.Five{
-										Boolean: &boolean5,
-									})
-								}
-							}
-						}
-					}
-					filterItem1 := shared.FilterItem{
-						DataType: dataType2,
-						Key:      key2,
-						Operator: operator2,
-						Value:    value2,
-					}
-					items2 = append(items2, shared.Items{
-						FilterItem: &filterItem1,
-					})
-				}
-				if itemsItem2.FilterGroup != nil {
-					combination3 := shared.FilterGroupCombination(itemsItem2.FilterGroup.Combination.ValueString())
-					items3 := make([]shared.FilterItem, 0, len(itemsItem2.FilterGroup.Items))
-					for _, itemsItem3 := range itemsItem2.FilterGroup.Items {
-						dataType3 := new(shared.DataType)
-						if !itemsItem3.DataType.IsUnknown() && !itemsItem3.DataType.IsNull() {
-							*dataType3 = shared.DataType(itemsItem3.DataType.ValueString())
-						} else {
-							dataType3 = nil
-						}
-						var key3 string
-						key3 = itemsItem3.Key.ValueString()
-
-						operator3 := shared.FilterOperator(itemsItem3.Operator.ValueString())
-						var value3 *shared.ValueType
-						if itemsItem3.Value != nil {
-							str6 := new(string)
-							if !itemsItem3.Value.Str.IsUnknown() && !itemsItem3.Value.Str.IsNull() {
-								*str6 = itemsItem3.Value.Str.ValueString()
-							} else {
-								str6 = nil
-							}
-							if str6 != nil {
-								value3 = &shared.ValueType{
-									Str: str6,
-								}
-							}
-							dynamicDateValue6 := new(shared.DynamicDateValue)
-							if !itemsItem3.Value.DynamicDateValue.IsUnknown() && !itemsItem3.Value.DynamicDateValue.IsNull() {
-								*dynamicDateValue6 = shared.DynamicDateValue(itemsItem3.Value.DynamicDateValue.ValueString())
-							} else {
-								dynamicDateValue6 = nil
-							}
-							if dynamicDateValue6 != nil {
-								value3 = &shared.ValueType{
-									DynamicDateValue: dynamicDateValue6,
-								}
-							}
-							number6 := new(float64)
-							if !itemsItem3.Value.Number.IsUnknown() && !itemsItem3.Value.Number.IsNull() {
-								*number6 = itemsItem3.Value.Number.ValueFloat64()
-							} else {
-								number6 = nil
-							}
-							if number6 != nil {
-								value3 = &shared.ValueType{
-									Number: number6,
-								}
-							}
-							boolean6 := new(bool)
-							if !itemsItem3.Value.Boolean.IsUnknown() && !itemsItem3.Value.Boolean.IsNull() {
-								*boolean6 = itemsItem3.Value.Boolean.ValueBool()
-							} else {
-								boolean6 = nil
-							}
-							if boolean6 != nil {
-								value3 = &shared.ValueType{
-									Boolean: boolean6,
-								}
-							}
-							var arrayOfFive3 []shared.Five
-							if itemsItem3.Value.ArrayOfFive != nil {
-								arrayOfFive3 = make([]shared.Five, 0, len(itemsItem3.Value.ArrayOfFive))
-								for _, arrayOfFiveItem3 := range itemsItem3.Value.ArrayOfFive {
-									if !arrayOfFiveItem3.Str.IsUnknown() && !arrayOfFiveItem3.Str.IsNull() {
-										var str7 string
-										str7 = arrayOfFiveItem3.Str.ValueString()
-
-										arrayOfFive3 = append(arrayOfFive3, shared.Five{
-											Str: &str7,
-										})
-									}
-									if !arrayOfFiveItem3.DynamicDateValue.IsUnknown() && !arrayOfFiveItem3.DynamicDateValue.IsNull() {
-										dynamicDateValue7 := shared.DynamicDateValue(arrayOfFiveItem3.DynamicDateValue.ValueString())
-										arrayOfFive3 = append(arrayOfFive3, shared.Five{
-											DynamicDateValue: &dynamicDateValue7,
-										})
-									}
-									if !arrayOfFiveItem3.Number.IsUnknown() && !arrayOfFiveItem3.Number.IsNull() {
-										var number7 float64
-										number7 = arrayOfFiveItem3.Number.ValueFloat64()
-
-										arrayOfFive3 = append(arrayOfFive3, shared.Five{
-											Number: &number7,
-										})
-									}
-									if !arrayOfFiveItem3.Boolean.IsUnknown() && !arrayOfFiveItem3.Boolean.IsNull() {
-										var boolean7 bool
-										boolean7 = arrayOfFiveItem3.Boolean.ValueBool()
-
-										arrayOfFive3 = append(arrayOfFive3, shared.Five{
-											Boolean: &boolean7,
-										})
-									}
-								}
-							}
-						}
-						items3 = append(items3, shared.FilterItem{
-							DataType: dataType3,
-							Key:      key3,
-							Operator: operator3,
-							Value:    value3,
+			sorting = &shared.Sorting{
+				Direction: direction,
+				Field:     field,
+			}
+		}
+		swimlanes := make([]shared.Swimlane, 0, len(r.Config.Swimlanes))
+		for _, swimlanesItem := range r.Config.Swimlanes {
+			var filter *shared.BoardFilter
+			if swimlanesItem.Filter != nil {
+				combination2 := shared.Combination(swimlanesItem.Filter.Combination.ValueString())
+				items2 := make([]shared.Items, 0, len(swimlanesItem.Filter.Items))
+				for _, itemsItem2 := range swimlanesItem.Filter.Items {
+					if !itemsItem2.Any.IsUnknown() && !itemsItem2.Any.IsNull() {
+						var any1 interface{}
+						_ = json.Unmarshal([]byte(itemsItem2.Any.ValueString()), &any1)
+						items2 = append(items2, shared.Items{
+							Any: &any1,
 						})
 					}
-					filterGroup1 := shared.FilterGroup{
-						Combination: combination3,
-						Items:       items3,
+					if itemsItem2.FilterGroup != nil {
+						combination3 := shared.FilterGroupCombination(itemsItem2.FilterGroup.Combination.ValueString())
+						items3 := make([]interface{}, 0, len(itemsItem2.FilterGroup.Items))
+						for _, itemsItem3 := range itemsItem2.FilterGroup.Items {
+							var itemsTmp1 interface{}
+							_ = json.Unmarshal([]byte(itemsItem3.ValueString()), &itemsTmp1)
+							items3 = append(items3, itemsTmp1)
+						}
+						filterGroup1 := shared.FilterGroup{
+							Combination: combination3,
+							Items:       items3,
+						}
+						items2 = append(items2, shared.Items{
+							FilterGroup: &filterGroup1,
+						})
 					}
-					items2 = append(items2, shared.Items{
-						FilterGroup: &filterGroup1,
-					})
+				}
+				filter = &shared.BoardFilter{
+					Combination: combination2,
+					Items:       items2,
 				}
 			}
-			filter = &shared.BoardFilter{
-				Combination: combination2,
-				Items:       items2,
+			var id interface{}
+			if !swimlanesItem.ID.IsUnknown() && !swimlanesItem.ID.IsNull() {
+				_ = json.Unmarshal([]byte(swimlanesItem.ID.ValueString()), &id)
 			}
+			position := new(float64)
+			if !swimlanesItem.Position.IsUnknown() && !swimlanesItem.Position.IsNull() {
+				*position = swimlanesItem.Position.ValueFloat64()
+			} else {
+				position = nil
+			}
+			title := new(string)
+			if !swimlanesItem.Title.IsUnknown() && !swimlanesItem.Title.IsNull() {
+				*title = swimlanesItem.Title.ValueString()
+			} else {
+				title = nil
+			}
+			titleChipVariant := new(string)
+			if !swimlanesItem.TitleChipVariant.IsUnknown() && !swimlanesItem.TitleChipVariant.IsNull() {
+				*titleChipVariant = swimlanesItem.TitleChipVariant.ValueString()
+			} else {
+				titleChipVariant = nil
+			}
+			swimlanes = append(swimlanes, shared.Swimlane{
+				Filter:           filter,
+				ID:               id,
+				Position:         position,
+				Title:            title,
+				TitleChipVariant: titleChipVariant,
+			})
 		}
-		id := new(string)
-		if !swimlanesItem.ID.IsUnknown() && !swimlanesItem.ID.IsNull() {
-			*id = swimlanesItem.ID.ValueString()
-		} else {
-			id = nil
+		config = &shared.Config{
+			BoardFilter: boardFilter,
+			CardConfig:  cardConfig,
+			Dataset:     dataset,
+			SearchQuery: searchQuery,
+			Sorting:     sorting,
+			Swimlanes:   swimlanes,
 		}
-		position := new(float64)
-		if !swimlanesItem.Position.IsUnknown() && !swimlanesItem.Position.IsNull() {
-			*position = swimlanesItem.Position.ValueFloat64()
-		} else {
-			position = nil
-		}
-		title := new(string)
-		if !swimlanesItem.Title.IsUnknown() && !swimlanesItem.Title.IsNull() {
-			*title = swimlanesItem.Title.ValueString()
-		} else {
-			title = nil
-		}
-		titleChipVariant := new(string)
-		if !swimlanesItem.TitleChipVariant.IsUnknown() && !swimlanesItem.TitleChipVariant.IsNull() {
-			*titleChipVariant = swimlanesItem.TitleChipVariant.ValueString()
-		} else {
-			titleChipVariant = nil
-		}
-		swimlanes = append(swimlanes, shared.Swimlane{
-			Filter:           filter,
-			ID:               id,
-			Position:         position,
-			Title:            title,
-			TitleChipVariant: titleChipVariant,
-		})
-	}
-	config := shared.Config{
-		BoardFilter: boardFilter,
-		CardConfig:  cardConfig,
-		Dataset:     dataset,
-		SearchQuery: searchQuery,
-		Sorting:     sorting,
-		Swimlanes:   swimlanes,
 	}
 	createdAt := new(time.Time)
 	if !r.CreatedAt.IsUnknown() && !r.CreatedAt.IsNull() {
@@ -761,6 +416,10 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 	} else {
 		orgID = nil
 	}
+	owners := make([]string, 0, len(r.Owners))
+	for _, ownersItem := range r.Owners {
+		owners = append(owners, ownersItem.ValueString())
+	}
 	sharedWith := make([]string, 0, len(r.SharedWith))
 	for _, sharedWithItem := range r.SharedWith {
 		sharedWith = append(sharedWith, sharedWithItem.ValueString())
@@ -771,9 +430,12 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 	} else {
 		sharedWithOrg = nil
 	}
-	var title1 string
-	title1 = r.Title.ValueString()
-
+	title1 := new(string)
+	if !r.Title.IsUnknown() && !r.Title.IsNull() {
+		*title1 = r.Title.ValueString()
+	} else {
+		title1 = nil
+	}
 	updatedAt := new(time.Time)
 	if !r.UpdatedAt.IsUnknown() && !r.UpdatedAt.IsNull() {
 		*updatedAt, _ = time.Parse(time.RFC3339Nano, r.UpdatedAt.ValueString())
@@ -793,6 +455,7 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 		Description:   description,
 		ID:            id1,
 		OrgID:         orgID,
+		Owners:        owners,
 		SharedWith:    sharedWith,
 		SharedWithOrg: sharedWithOrg,
 		Title:         title1,

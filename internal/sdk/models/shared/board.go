@@ -70,15 +70,17 @@ func (o *Config) GetSwimlanes() []Swimlane {
 }
 
 type Board struct {
-	Config        Config     `json:"config"`
-	CreatedAt     *time.Time `json:"created_at,omitempty"`
-	CreatedBy     *string    `json:"created_by,omitempty"`
-	Description   *string    `json:"description,omitempty"`
-	ID            *string    `json:"id,omitempty"`
-	OrgID         *string    `json:"org_id,omitempty"`
+	Config      *Config    `json:"config,omitempty"`
+	CreatedAt   *time.Time `json:"created_at,omitempty"`
+	CreatedBy   *string    `json:"created_by,omitempty"`
+	Description *string    `json:"description,omitempty"`
+	ID          *string    `json:"id,omitempty"`
+	OrgID       *string    `json:"org_id,omitempty"`
+	// Array of user IDs who have full ownership rights for this board (view, edit, delete)
+	Owners        []string   `json:"owners,omitempty"`
 	SharedWith    []string   `json:"shared_with,omitempty"`
 	SharedWithOrg *bool      `json:"shared_with_org,omitempty"`
-	Title         string     `json:"title"`
+	Title         *string    `json:"title,omitempty"`
 	UpdatedAt     *time.Time `json:"updated_at,omitempty"`
 	UpdatedBy     *string    `json:"updated_by,omitempty"`
 }
@@ -88,15 +90,15 @@ func (b Board) MarshalJSON() ([]byte, error) {
 }
 
 func (b *Board) UnmarshalJSON(data []byte) error {
-	if err := utils.UnmarshalJSON(data, &b, "", false, []string{"config", "title"}); err != nil {
+	if err := utils.UnmarshalJSON(data, &b, "", false, nil); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (o *Board) GetConfig() Config {
+func (o *Board) GetConfig() *Config {
 	if o == nil {
-		return Config{}
+		return nil
 	}
 	return o.Config
 }
@@ -136,6 +138,13 @@ func (o *Board) GetOrgID() *string {
 	return o.OrgID
 }
 
+func (o *Board) GetOwners() []string {
+	if o == nil {
+		return nil
+	}
+	return o.Owners
+}
+
 func (o *Board) GetSharedWith() []string {
 	if o == nil {
 		return nil
@@ -150,9 +159,9 @@ func (o *Board) GetSharedWithOrg() *bool {
 	return o.SharedWithOrg
 }
 
-func (o *Board) GetTitle() string {
+func (o *Board) GetTitle() *string {
 	if o == nil {
-		return ""
+		return nil
 	}
 	return o.Title
 }

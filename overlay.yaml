@@ -19,16 +19,36 @@ actions:
   - target: $["paths"]["/v1/kanban/board"]["post"]
     update:
       x-speakeasy-entity-operation: Kanban#create
-  - target: $["paths"]["/v1/kanban/board/{id}"]["get"]
+
+  - target: $["paths"]["/v1/kanban/board/{boardId}"]["get"]
     update:
       x-speakeasy-entity-operation: Kanban#get
-  - target: $["paths"]["/v1/kanban/board/{id}"]["patch"]
+
+  - target: $["paths"]["/v1/kanban/board/{boardId}"]["patch"]
     update:
       x-speakeasy-entity-operation: Kanban#update
-  - target: $["paths"]["/v1/kanban/board/{id}"]["delete"]
+
+  - target: $["paths"]["/v1/kanban/board/{boardId}"]["delete"]
     update:
       x-speakeasy-entity-operation: Kanban#delete
 
   - target: $["components"]["schemas"]["Board"]
     update:
       x-speakeasy-entity: Kanban
+
+  - target: $["paths"]["/v1/kanban/board/{boardId}"]["get"]["parameters"][0]
+    update:
+      x-speakeasy-match: id
+  - target: $["paths"]["/v1/kanban/board/{boardId}"]["patch"]["parameters"][0]
+    update:
+      x-speakeasy-match: id
+  - target: $["paths"]["/v1/kanban/board/{boardId}"]["delete"]["parameters"][0]
+    update:
+      x-speakeasy-match: id
+
+  - target: $["components"]["schemas"]["FilterItem"]
+    update:
+      x-speakeasy-type-override: any
+
+  - target: $["components"]["schemas"]["Board"]["allOf"][1]["required"]
+    remove: true
