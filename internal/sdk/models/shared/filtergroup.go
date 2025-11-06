@@ -50,16 +50,21 @@ func (f *FilterGroup) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *FilterGroup) GetCombination() FilterGroupCombination {
-	if o == nil {
+func (f *FilterGroup) GetCombination() FilterGroupCombination {
+	if f == nil {
 		return FilterGroupCombination("")
 	}
-	return o.Combination
+	return f.Combination
 }
 
+<<<<<<< HEAD
 func (o *FilterGroup) GetItems() []any {
 	if o == nil {
+=======
+func (f *FilterGroup) GetItems() []any {
+	if f == nil {
+>>>>>>> e4c5399c64e244ca50474a583c83147415fedf68
 		return []any{}
 	}
-	return o.Items
+	return f.Items
 }

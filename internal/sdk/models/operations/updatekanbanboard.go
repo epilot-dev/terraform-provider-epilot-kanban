@@ -12,18 +12,18 @@ type UpdateKanbanBoardRequest struct {
 	BoardID string        `pathParam:"style=simple,explode=false,name=boardId"`
 }
 
-func (o *UpdateKanbanBoardRequest) GetBoard() *shared.Board {
-	if o == nil {
+func (u *UpdateKanbanBoardRequest) GetBoard() *shared.Board {
+	if u == nil {
 		return nil
 	}
-	return o.Board
+	return u.Board
 }
 
-func (o *UpdateKanbanBoardRequest) GetBoardID() string {
-	if o == nil {
+func (u *UpdateKanbanBoardRequest) GetBoardID() string {
+	if u == nil {
 		return ""
 	}
-	return o.BoardID
+	return u.BoardID
 }
 
 type UpdateKanbanBoardResponse struct {
@@ -37,30 +37,30 @@ type UpdateKanbanBoardResponse struct {
 	RawResponse *http.Response
 }
 
-func (o *UpdateKanbanBoardResponse) GetBoard() *shared.Board {
-	if o == nil {
+func (u *UpdateKanbanBoardResponse) GetBoard() *shared.Board {
+	if u == nil {
 		return nil
 	}
-	return o.Board
+	return u.Board
 }
 
-func (o *UpdateKanbanBoardResponse) GetContentType() string {
-	if o == nil {
+func (u *UpdateKanbanBoardResponse) GetContentType() string {
+	if u == nil {
 		return ""
 	}
-	return o.ContentType
+	return u.ContentType
 }
 
-func (o *UpdateKanbanBoardResponse) GetStatusCode() int {
-	if o == nil {
+func (u *UpdateKanbanBoardResponse) GetStatusCode() int {
+	if u == nil {
 		return 0
 	}
-	return o.StatusCode
+	return u.StatusCode
 }
 
-func (o *UpdateKanbanBoardResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (u *UpdateKanbanBoardResponse) GetRawResponse() *http.Response {
+	if u == nil {
 		return nil
 	}
-	return o.RawResponse
+	return u.RawResponse
 }

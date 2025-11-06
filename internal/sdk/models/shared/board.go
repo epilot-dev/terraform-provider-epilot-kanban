@@ -11,11 +11,11 @@ type CardConfig struct {
 	Fields []string `json:"fields,omitempty"`
 }
 
-func (o *CardConfig) GetFields() []string {
-	if o == nil {
+func (c *CardConfig) GetFields() []string {
+	if c == nil {
 		return nil
 	}
-	return o.Fields
+	return c.Fields
 }
 
 type Config struct {
@@ -27,46 +27,46 @@ type Config struct {
 	Swimlanes   []Swimlane   `json:"swimlanes,omitempty"`
 }
 
-func (o *Config) GetBoardFilter() *BoardFilter {
-	if o == nil {
+func (c *Config) GetBoardFilter() *BoardFilter {
+	if c == nil {
 		return nil
 	}
-	return o.BoardFilter
+	return c.BoardFilter
 }
 
-func (o *Config) GetCardConfig() *CardConfig {
-	if o == nil {
+func (c *Config) GetCardConfig() *CardConfig {
+	if c == nil {
 		return nil
 	}
-	return o.CardConfig
+	return c.CardConfig
 }
 
-func (o *Config) GetDataset() *string {
-	if o == nil {
+func (c *Config) GetDataset() *string {
+	if c == nil {
 		return nil
 	}
-	return o.Dataset
+	return c.Dataset
 }
 
-func (o *Config) GetSearchQuery() *string {
-	if o == nil {
+func (c *Config) GetSearchQuery() *string {
+	if c == nil {
 		return nil
 	}
-	return o.SearchQuery
+	return c.SearchQuery
 }
 
-func (o *Config) GetSorting() *Sorting {
-	if o == nil {
+func (c *Config) GetSorting() *Sorting {
+	if c == nil {
 		return nil
 	}
-	return o.Sorting
+	return c.Sorting
 }
 
-func (o *Config) GetSwimlanes() []Swimlane {
-	if o == nil {
+func (c *Config) GetSwimlanes() []Swimlane {
+	if c == nil {
 		return nil
 	}
-	return o.Swimlanes
+	return c.Swimlanes
 }
 
 type Board struct {
@@ -96,48 +96,55 @@ func (b *Board) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+<<<<<<< HEAD
 func (o *Board) GetConfig() *Config {
 	if o == nil {
 		return nil
+=======
+func (b *Board) GetConfig() Config {
+	if b == nil {
+		return Config{}
+>>>>>>> e4c5399c64e244ca50474a583c83147415fedf68
 	}
-	return o.Config
+	return b.Config
 }
 
-func (o *Board) GetCreatedAt() *time.Time {
-	if o == nil {
+func (b *Board) GetCreatedAt() *time.Time {
+	if b == nil {
 		return nil
 	}
-	return o.CreatedAt
+	return b.CreatedAt
 }
 
-func (o *Board) GetCreatedBy() *string {
-	if o == nil {
+func (b *Board) GetCreatedBy() *string {
+	if b == nil {
 		return nil
 	}
-	return o.CreatedBy
+	return b.CreatedBy
 }
 
-func (o *Board) GetDescription() *string {
-	if o == nil {
+func (b *Board) GetDescription() *string {
+	if b == nil {
 		return nil
 	}
-	return o.Description
+	return b.Description
 }
 
-func (o *Board) GetID() *string {
-	if o == nil {
+func (b *Board) GetID() *string {
+	if b == nil {
 		return nil
 	}
-	return o.ID
+	return b.ID
 }
 
-func (o *Board) GetOrgID() *string {
-	if o == nil {
+func (b *Board) GetOrgID() *string {
+	if b == nil {
 		return nil
 	}
-	return o.OrgID
+	return b.OrgID
 }
 
+<<<<<<< HEAD
 func (o *Board) GetOwners() []string {
 	if o == nil {
 		return nil
@@ -147,35 +154,45 @@ func (o *Board) GetOwners() []string {
 
 func (o *Board) GetSharedWith() []string {
 	if o == nil {
+=======
+func (b *Board) GetSharedWith() []string {
+	if b == nil {
+>>>>>>> e4c5399c64e244ca50474a583c83147415fedf68
 		return nil
 	}
-	return o.SharedWith
+	return b.SharedWith
 }
 
-func (o *Board) GetSharedWithOrg() *bool {
-	if o == nil {
+func (b *Board) GetSharedWithOrg() *bool {
+	if b == nil {
 		return nil
 	}
-	return o.SharedWithOrg
+	return b.SharedWithOrg
 }
 
+<<<<<<< HEAD
 func (o *Board) GetTitle() *string {
 	if o == nil {
 		return nil
+=======
+func (b *Board) GetTitle() string {
+	if b == nil {
+		return ""
+>>>>>>> e4c5399c64e244ca50474a583c83147415fedf68
 	}
-	return o.Title
+	return b.Title
 }
 
-func (o *Board) GetUpdatedAt() *time.Time {
-	if o == nil {
+func (b *Board) GetUpdatedAt() *time.Time {
+	if b == nil {
 		return nil
 	}
-	return o.UpdatedAt
+	return b.UpdatedAt
 }
 
-func (o *Board) GetUpdatedBy() *string {
-	if o == nil {
+func (b *Board) GetUpdatedBy() *string {
+	if b == nil {
 		return nil
 	}
-	return o.UpdatedBy
+	return b.UpdatedBy
 }

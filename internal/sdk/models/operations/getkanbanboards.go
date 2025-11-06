@@ -41,11 +41,11 @@ type GetKanbanBoardsRequest struct {
 	Filter *Filter `queryParam:"style=form,explode=true,name=filter"`
 }
 
-func (o *GetKanbanBoardsRequest) GetFilter() *Filter {
-	if o == nil {
+func (g *GetKanbanBoardsRequest) GetFilter() *Filter {
+	if g == nil {
 		return nil
 	}
-	return o.Filter
+	return g.Filter
 }
 
 type GetKanbanBoardsResponse struct {
@@ -59,30 +59,30 @@ type GetKanbanBoardsResponse struct {
 	Classes []shared.BoardSummary
 }
 
-func (o *GetKanbanBoardsResponse) GetContentType() string {
-	if o == nil {
+func (g *GetKanbanBoardsResponse) GetContentType() string {
+	if g == nil {
 		return ""
 	}
-	return o.ContentType
+	return g.ContentType
 }
 
-func (o *GetKanbanBoardsResponse) GetStatusCode() int {
-	if o == nil {
+func (g *GetKanbanBoardsResponse) GetStatusCode() int {
+	if g == nil {
 		return 0
 	}
-	return o.StatusCode
+	return g.StatusCode
 }
 
-func (o *GetKanbanBoardsResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (g *GetKanbanBoardsResponse) GetRawResponse() *http.Response {
+	if g == nil {
 		return nil
 	}
-	return o.RawResponse
+	return g.RawResponse
 }
 
-func (o *GetKanbanBoardsResponse) GetClasses() []shared.BoardSummary {
-	if o == nil {
+func (g *GetKanbanBoardsResponse) GetClasses() []shared.BoardSummary {
+	if g == nil {
 		return nil
 	}
-	return o.Classes
+	return g.Classes
 }

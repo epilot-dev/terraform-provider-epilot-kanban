@@ -1,12 +1,21 @@
 lockVersion: 2.0.0
 id: 5a857039-7f4b-42d5-86fd-449767242ed2
 management:
+<<<<<<< HEAD
   docChecksum: 0a035053ffb0c4be9abde4fbcaf9b4fd
   docVersion: 1.2.3
   speakeasyVersion: 1.611.0
   generationVersion: 2.694.1
   releaseVersion: 0.17.4
   configChecksum: 8ee54dbef2dc9f7ff7609e2b24886c24
+=======
+  docChecksum: 2980074f5f2f003928c9ba9f5e3721c9
+  docVersion: 1.2.2
+  speakeasyVersion: 1.643.3
+  generationVersion: 2.731.9
+  releaseVersion: 0.18.0
+  configChecksum: 926a62fb5cf7157daae5c6a05c255f5f
+>>>>>>> e4c5399c64e244ca50474a583c83147415fedf68
   repoURL: https://github.com/epilot-dev/terraform-provider-epilot-product.git
   repoSubDirectory: .
   published: true
@@ -22,18 +31,25 @@ features:
   terraform:
     additionalDependencies: 0.1.0
     additionalProperties: 0.1.2
-    constsAndDefaults: 0.2.1
-    core: 3.44.1
-    globalSecurity: 2.82.0
+    constsAndDefaults: 0.3.0
+    core: 3.46.4
+    globalSecurity: 2.82.1
     globalServerURLs: 2.83.0
     retries: 2.81.4
     typeOverrides: 2.81.1
+<<<<<<< HEAD
     unions: 2.81.17
 generatedFiles:
   - .gitattributes
   - USAGE.md
   - examples/README.md
   - examples/data-sources/epilot-kanban_kanban/data-source.tf
+=======
+    unions: 2.82.2
+generatedFiles:
+  - .gitattributes
+  - USAGE.md
+>>>>>>> e4c5399c64e244ca50474a583c83147415fedf68
   - examples/provider/provider.tf
   - examples/resources/epilot-kanban_kanban/import-by-string-id.tf
   - examples/resources/epilot-kanban_kanban/import.sh
@@ -117,13 +133,17 @@ generatedFiles:
   - internal/sdk/models/shared/security.go
   - internal/sdk/models/shared/sorting.go
   - internal/sdk/models/shared/swimlane.go
+<<<<<<< HEAD
+=======
+  - internal/sdk/optionalnullable/optionalnullable.go
+  - internal/sdk/optionalnullable/optionalnullable_test.go
+>>>>>>> e4c5399c64e244ca50474a583c83147415fedf68
   - internal/sdk/query.go
   - internal/sdk/retry/config.go
   - internal/sdk/sdk.go
   - internal/sdk/types/bigint.go
   - internal/sdk/types/date.go
   - internal/sdk/types/datetime.go
-  - internal/sdk/types/decimal.go
   - internal/sdk/types/pointers.go
   - internal/validators/DateValidator.go
   - internal/validators/ExactlyOneChild.go

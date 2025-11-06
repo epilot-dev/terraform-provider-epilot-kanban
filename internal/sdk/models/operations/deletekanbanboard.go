@@ -10,11 +10,11 @@ type DeleteKanbanBoardRequest struct {
 	BoardID string `pathParam:"style=simple,explode=false,name=boardId"`
 }
 
-func (o *DeleteKanbanBoardRequest) GetBoardID() string {
-	if o == nil {
+func (d *DeleteKanbanBoardRequest) GetBoardID() string {
+	if d == nil {
 		return ""
 	}
-	return o.BoardID
+	return d.BoardID
 }
 
 type DeleteKanbanBoardResponse struct {
@@ -26,23 +26,23 @@ type DeleteKanbanBoardResponse struct {
 	RawResponse *http.Response
 }
 
-func (o *DeleteKanbanBoardResponse) GetContentType() string {
-	if o == nil {
+func (d *DeleteKanbanBoardResponse) GetContentType() string {
+	if d == nil {
 		return ""
 	}
-	return o.ContentType
+	return d.ContentType
 }
 
-func (o *DeleteKanbanBoardResponse) GetStatusCode() int {
-	if o == nil {
+func (d *DeleteKanbanBoardResponse) GetStatusCode() int {
+	if d == nil {
 		return 0
 	}
-	return o.StatusCode
+	return d.StatusCode
 }
 
-func (o *DeleteKanbanBoardResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (d *DeleteKanbanBoardResponse) GetRawResponse() *http.Response {
+	if d == nil {
 		return nil
 	}
-	return o.RawResponse
+	return d.RawResponse
 }

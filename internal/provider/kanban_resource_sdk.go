@@ -33,6 +33,7 @@ func (r *KanbanResourceModel) RefreshFromSharedBoard(ctx context.Context, resp *
 				for _, itemsItem := range resp.Config.BoardFilter.Items {
 					var items tfTypes.Items
 
+<<<<<<< HEAD
 					if itemsItem.Any != nil {
 						anyResult, _ := json.Marshal(itemsItem.Any)
 						items.Any = jsontypes.NewNormalizedValue(string(anyResult))
@@ -50,6 +51,25 @@ func (r *KanbanResourceModel) RefreshFromSharedBoard(ctx context.Context, resp *
 							items.FilterGroup.Items = append(items.FilterGroup.Items, items1)
 						}
 					}
+=======
+				if itemsItem.Any != nil {
+					anyResult, _ := json.Marshal(itemsItem.Any)
+					items.Any = jsontypes.NewNormalizedValue(string(anyResult))
+				}
+				if itemsItem.FilterGroup != nil {
+					items.FilterGroup = &tfTypes.FilterGroup{}
+					items.FilterGroup.Combination = types.StringValue(string(itemsItem.FilterGroup.Combination))
+					items.FilterGroup.Items = make([]jsontypes.Normalized, 0, len(itemsItem.FilterGroup.Items))
+					for _, itemsItem1 := range itemsItem.FilterGroup.Items {
+						var items1 jsontypes.Normalized
+
+						items1Result, _ := json.Marshal(itemsItem1)
+						items1 = jsontypes.NewNormalizedValue(string(items1Result))
+
+						items.FilterGroup.Items = append(items.FilterGroup.Items, items1)
+					}
+				}
+>>>>>>> e4c5399c64e244ca50474a583c83147415fedf68
 
 					r.Config.BoardFilter.Items = append(r.Config.BoardFilter.Items, items)
 				}
@@ -88,6 +108,7 @@ func (r *KanbanResourceModel) RefreshFromSharedBoard(ctx context.Context, resp *
 					swimlanes.Filter.Combination = types.StringValue(string(swimlanesItem.Filter.Combination))
 					swimlanes.Filter.Items = []tfTypes.Items{}
 
+<<<<<<< HEAD
 					for _, itemsItem2 := range swimlanesItem.Filter.Items {
 						var items2 tfTypes.Items
 
@@ -108,6 +129,25 @@ func (r *KanbanResourceModel) RefreshFromSharedBoard(ctx context.Context, resp *
 								items2.FilterGroup.Items = append(items2.FilterGroup.Items, items3)
 							}
 						}
+=======
+					if itemsItem2.Any != nil {
+						anyResult1, _ := json.Marshal(itemsItem2.Any)
+						items2.Any = jsontypes.NewNormalizedValue(string(anyResult1))
+					}
+					if itemsItem2.FilterGroup != nil {
+						items2.FilterGroup = &tfTypes.FilterGroup{}
+						items2.FilterGroup.Combination = types.StringValue(string(itemsItem2.FilterGroup.Combination))
+						items2.FilterGroup.Items = make([]jsontypes.Normalized, 0, len(itemsItem2.FilterGroup.Items))
+						for _, itemsItem3 := range itemsItem2.FilterGroup.Items {
+							var items3 jsontypes.Normalized
+
+							items3Result, _ := json.Marshal(itemsItem3)
+							items3 = jsontypes.NewNormalizedValue(string(items3Result))
+
+							items2.FilterGroup.Items = append(items2.FilterGroup.Items, items3)
+						}
+					}
+>>>>>>> e4c5399c64e244ca50474a583c83147415fedf68
 
 						swimlanes.Filter.Items = append(swimlanes.Filter.Items, items2)
 					}
@@ -150,6 +190,7 @@ func (r *KanbanResourceModel) RefreshFromSharedBoard(ctx context.Context, resp *
 func (r *KanbanResourceModel) ToOperationsDeleteKanbanBoardRequest(ctx context.Context) (*operations.DeleteKanbanBoardRequest, diag.Diagnostics) {
 	var diags diag.Diagnostics
 
+<<<<<<< HEAD
 	var boardID string
 	boardID = r.ID.ValueString()
 
@@ -266,6 +307,27 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 					items = append(items, shared.Items{
 						FilterGroup: &filterGroup,
 					})
+=======
+	var boardFilter *shared.BoardFilter
+	if r.Config.BoardFilter != nil {
+		combination := shared.Combination(r.Config.BoardFilter.Combination.ValueString())
+		items := make([]shared.Items, 0, len(r.Config.BoardFilter.Items))
+		for _, itemsItem := range r.Config.BoardFilter.Items {
+			if !itemsItem.Any.IsUnknown() && !itemsItem.Any.IsNull() {
+				var anyVar interface{}
+				_ = json.Unmarshal([]byte(itemsItem.Any.ValueString()), &anyVar)
+				items = append(items, shared.Items{
+					Any: &anyVar,
+				})
+			}
+			if itemsItem.FilterGroup != nil {
+				combination1 := shared.FilterGroupCombination(itemsItem.FilterGroup.Combination.ValueString())
+				items1 := make([]interface{}, 0, len(itemsItem.FilterGroup.Items))
+				for _, itemsItem1 := range itemsItem.FilterGroup.Items {
+					var itemsTmp interface{}
+					_ = json.Unmarshal([]byte(itemsItem1.ValueString()), &itemsTmp)
+					items1 = append(items1, itemsTmp)
+>>>>>>> e4c5399c64e244ca50474a583c83147415fedf68
 				}
 			}
 			boardFilter = &shared.BoardFilter{
@@ -311,6 +373,7 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 				Field:     field,
 			}
 		}
+<<<<<<< HEAD
 		swimlanes := make([]shared.Swimlane, 0, len(r.Config.Swimlanes))
 		for _, swimlanesItem := range r.Config.Swimlanes {
 			var filter *shared.BoardFilter
@@ -340,6 +403,30 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 						items2 = append(items2, shared.Items{
 							FilterGroup: &filterGroup1,
 						})
+=======
+	}
+	swimlanes := make([]shared.Swimlane, 0, len(r.Config.Swimlanes))
+	for _, swimlanesItem := range r.Config.Swimlanes {
+		var filter *shared.BoardFilter
+		if swimlanesItem.Filter != nil {
+			combination2 := shared.Combination(swimlanesItem.Filter.Combination.ValueString())
+			items2 := make([]shared.Items, 0, len(swimlanesItem.Filter.Items))
+			for _, itemsItem2 := range swimlanesItem.Filter.Items {
+				if !itemsItem2.Any.IsUnknown() && !itemsItem2.Any.IsNull() {
+					var any1 interface{}
+					_ = json.Unmarshal([]byte(itemsItem2.Any.ValueString()), &any1)
+					items2 = append(items2, shared.Items{
+						Any: &any1,
+					})
+				}
+				if itemsItem2.FilterGroup != nil {
+					combination3 := shared.FilterGroupCombination(itemsItem2.FilterGroup.Combination.ValueString())
+					items3 := make([]interface{}, 0, len(itemsItem2.FilterGroup.Items))
+					for _, itemsItem3 := range itemsItem2.FilterGroup.Items {
+						var itemsTmp1 interface{}
+						_ = json.Unmarshal([]byte(itemsItem3.ValueString()), &itemsTmp1)
+						items3 = append(items3, itemsTmp1)
+>>>>>>> e4c5399c64e244ca50474a583c83147415fedf68
 					}
 				}
 				filter = &shared.BoardFilter{

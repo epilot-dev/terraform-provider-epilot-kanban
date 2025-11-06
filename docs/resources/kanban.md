@@ -187,6 +187,7 @@ Optional:
 
 - `combination` (String) Not Null; must be one of ["AND", "OR"]; Requires replacement if changed.
 - `items` (List of String) Not Null; Requires replacement if changed.
+<<<<<<< HEAD
 
 ## Import
 
@@ -206,3 +207,5 @@ The [`terraform import` command](https://developer.hashicorp.com/terraform/cli/c
 ```shell
 terraform import epilot-kanban_kanban.my_epilot-kanban_kanban "..."
 ```
+=======
+>>>>>>> e4c5399c64e244ca50474a583c83147415fedf68
