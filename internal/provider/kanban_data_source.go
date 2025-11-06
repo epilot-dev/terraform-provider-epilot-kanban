@@ -153,9 +153,7 @@ func (r *KanbanDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 									},
 								},
 								"id": schema.StringAttribute{
-									CustomType:  jsontypes.NormalizedType{},
-									Computed:    true,
-									Description: `Parsed as JSON.`,
+									Computed: true,
 								},
 								"position": schema.Float64Attribute{
 									Computed: true,

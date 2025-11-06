@@ -3,14 +3,13 @@
 package types
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework-jsontypes/jsontypes"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type Swimlane struct {
-	Filter           *BoardFilter         `tfsdk:"filter"`
-	ID               jsontypes.Normalized `tfsdk:"id"`
-	Position         types.Float64        `tfsdk:"position"`
-	Title            types.String         `tfsdk:"title"`
-	TitleChipVariant types.String         `tfsdk:"title_chip_variant"`
+	Filter           *BoardFilter  `tfsdk:"filter"`
+	ID               types.String  `tfsdk:"id"`
+	Position         types.Float64 `tfsdk:"position"`
+	Title            types.String  `tfsdk:"title"`
+	TitleChipVariant types.String  `tfsdk:"title_chip_variant"`
 }

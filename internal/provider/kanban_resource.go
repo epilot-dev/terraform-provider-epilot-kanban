@@ -396,14 +396,13 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 									Description: `Requires replacement if changed.`,
 								},
 								"id": schema.StringAttribute{
-									CustomType: jsontypes.NormalizedType{},
-									Computed:   true,
-									Optional:   true,
+									Computed: true,
+									Optional: true,
 									PlanModifiers: []planmodifier.String{
 										stringplanmodifier.RequiresReplaceIfConfigured(),
 										speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 									},
-									Description: `Requires replacement if changed.; Parsed as JSON.`,
+									Description: `Requires replacement if changed.`,
 								},
 								"position": schema.Float64Attribute{
 									Computed: true,

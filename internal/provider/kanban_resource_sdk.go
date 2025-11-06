@@ -112,12 +112,7 @@ func (r *KanbanResourceModel) RefreshFromSharedBoard(ctx context.Context, resp *
 						swimlanes.Filter.Items = append(swimlanes.Filter.Items, items2)
 					}
 				}
-				if swimlanesItem.ID == nil {
-					swimlanes.ID = jsontypes.NewNormalizedNull()
-				} else {
-					idResult, _ := json.Marshal(swimlanesItem.ID)
-					swimlanes.ID = jsontypes.NewNormalizedValue(string(idResult))
-				}
+				swimlanes.ID = types.StringPointerValue(swimlanesItem.ID)
 				swimlanes.Position = types.Float64PointerValue(swimlanesItem.Position)
 				swimlanes.Title = types.StringPointerValue(swimlanesItem.Title)
 				swimlanes.TitleChipVariant = types.StringPointerValue(swimlanesItem.TitleChipVariant)
@@ -347,9 +342,11 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 					Items:       items2,
 				}
 			}
-			var id interface{}
+			id := new(string)
 			if !swimlanesItem.ID.IsUnknown() && !swimlanesItem.ID.IsNull() {
-				_ = json.Unmarshal([]byte(swimlanesItem.ID.ValueString()), &id)
+				*id = swimlanesItem.ID.ValueString()
+			} else {
+				id = nil
 			}
 			position := new(float64)
 			if !swimlanesItem.Position.IsUnknown() && !swimlanesItem.Position.IsNull() {

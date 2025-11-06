@@ -111,12 +111,7 @@ func (r *KanbanDataSourceModel) RefreshFromSharedBoard(ctx context.Context, resp
 						swimlanes.Filter.Items = append(swimlanes.Filter.Items, items2)
 					}
 				}
-				if swimlanesItem.ID == nil {
-					swimlanes.ID = jsontypes.NewNormalizedNull()
-				} else {
-					idResult, _ := json.Marshal(swimlanesItem.ID)
-					swimlanes.ID = jsontypes.NewNormalizedValue(string(idResult))
-				}
+				swimlanes.ID = types.StringPointerValue(swimlanesItem.ID)
 				swimlanes.Position = types.Float64PointerValue(swimlanesItem.Position)
 				swimlanes.Title = types.StringPointerValue(swimlanesItem.Title)
 				swimlanes.TitleChipVariant = types.StringPointerValue(swimlanesItem.TitleChipVariant)

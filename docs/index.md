@@ -16,7 +16,7 @@ terraform {
   required_providers {
     epilot-kanban = {
       source  = "epilot-dev/epilot-kanban"
-      version = "0.17.2"
+      version = "0.18.1"
     }
   }
 }
