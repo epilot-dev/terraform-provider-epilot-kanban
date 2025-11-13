@@ -49,18 +49,18 @@ type KanbanResource struct {
 
 // KanbanResourceModel describes the resource data model.
 type KanbanResourceModel struct {
-	Config        *tfTypes.Config `tfsdk:"config"`
-	CreatedAt     types.String    `tfsdk:"created_at"`
-	CreatedBy     types.String    `tfsdk:"created_by"`
-	Description   types.String    `tfsdk:"description"`
-	ID            types.String    `tfsdk:"id"`
-	OrgID         types.String    `tfsdk:"org_id"`
-	Owners        []types.String  `tfsdk:"owners"`
-	SharedWith    []types.String  `tfsdk:"shared_with"`
-	SharedWithOrg types.Bool      `tfsdk:"shared_with_org"`
-	Title         types.String    `tfsdk:"title"`
-	UpdatedAt     types.String    `tfsdk:"updated_at"`
-	UpdatedBy     types.String    `tfsdk:"updated_by"`
+	Config        *tfTypes.Config      `tfsdk:"config"`
+	CreatedAt     types.String         `tfsdk:"created_at"`
+	CreatedBy     types.String         `tfsdk:"created_by"`
+	Description   types.String         `tfsdk:"description"`
+	ID            types.String         `tfsdk:"id"`
+	OrgID         types.String         `tfsdk:"org_id"`
+	Owners        jsontypes.Normalized `tfsdk:"owners"`
+	SharedWith    jsontypes.Normalized `tfsdk:"shared_with"`
+	SharedWithOrg types.Bool           `tfsdk:"shared_with_org"`
+	Title         types.String         `tfsdk:"title"`
+	UpdatedAt     types.String         `tfsdk:"updated_at"`
+	UpdatedBy     types.String         `tfsdk:"updated_by"`
 }
 
 func (r *KanbanResource) Metadata(ctx context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -481,16 +481,17 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 				},
 				Description: `Requires replacement if changed.`,
 			},
-			"owners": schema.ListAttribute{
+			"owners": schema.StringAttribute{
+				CustomType:  jsontypes.NormalizedType{},
 				Computed:    true,
 				Optional:    true,
-				ElementType: types.StringType,
-				Description: `Array of user IDs who have full ownership rights for this board (view, edit, delete)`,
+				Description: `Array of user IDs who have full ownership rights for this board (view, edit, delete). Parsed as JSON.`,
 			},
-			"shared_with": schema.ListAttribute{
+			"shared_with": schema.StringAttribute{
+				CustomType:  jsontypes.NormalizedType{},
 				Computed:    true,
 				Optional:    true,
-				ElementType: types.StringType,
+				Description: `Parsed as JSON.`,
 			},
 			"shared_with_org": schema.BoolAttribute{
 				Computed: true,

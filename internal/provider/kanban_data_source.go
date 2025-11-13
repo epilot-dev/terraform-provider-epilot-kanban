@@ -30,18 +30,18 @@ type KanbanDataSource struct {
 
 // KanbanDataSourceModel describes the data model.
 type KanbanDataSourceModel struct {
-	Config        *tfTypes.Config `tfsdk:"config"`
-	CreatedAt     types.String    `tfsdk:"created_at"`
-	CreatedBy     types.String    `tfsdk:"created_by"`
-	Description   types.String    `tfsdk:"description"`
-	ID            types.String    `tfsdk:"id"`
-	OrgID         types.String    `tfsdk:"org_id"`
-	Owners        []types.String  `tfsdk:"owners"`
-	SharedWith    []types.String  `tfsdk:"shared_with"`
-	SharedWithOrg types.Bool      `tfsdk:"shared_with_org"`
-	Title         types.String    `tfsdk:"title"`
-	UpdatedAt     types.String    `tfsdk:"updated_at"`
-	UpdatedBy     types.String    `tfsdk:"updated_by"`
+	Config        *tfTypes.Config      `tfsdk:"config"`
+	CreatedAt     types.String         `tfsdk:"created_at"`
+	CreatedBy     types.String         `tfsdk:"created_by"`
+	Description   types.String         `tfsdk:"description"`
+	ID            types.String         `tfsdk:"id"`
+	OrgID         types.String         `tfsdk:"org_id"`
+	Owners        jsontypes.Normalized `tfsdk:"owners"`
+	SharedWith    jsontypes.Normalized `tfsdk:"shared_with"`
+	SharedWithOrg types.Bool           `tfsdk:"shared_with_org"`
+	Title         types.String         `tfsdk:"title"`
+	UpdatedAt     types.String         `tfsdk:"updated_at"`
+	UpdatedBy     types.String         `tfsdk:"updated_by"`
 }
 
 // Metadata returns the data source type name.
@@ -184,14 +184,15 @@ func (r *KanbanDataSource) Schema(ctx context.Context, req datasource.SchemaRequ
 			"org_id": schema.StringAttribute{
 				Computed: true,
 			},
-			"owners": schema.ListAttribute{
+			"owners": schema.StringAttribute{
+				CustomType:  jsontypes.NormalizedType{},
 				Computed:    true,
-				ElementType: types.StringType,
-				Description: `Array of user IDs who have full ownership rights for this board (view, edit, delete)`,
+				Description: `Array of user IDs who have full ownership rights for this board (view, edit, delete). Parsed as JSON.`,
 			},
-			"shared_with": schema.ListAttribute{
+			"shared_with": schema.StringAttribute{
+				CustomType:  jsontypes.NormalizedType{},
 				Computed:    true,
-				ElementType: types.StringType,
+				Description: `Parsed as JSON.`,
 			},
 			"shared_with_org": schema.BoolAttribute{
 				Computed: true,

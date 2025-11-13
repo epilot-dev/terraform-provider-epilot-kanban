@@ -125,13 +125,17 @@ func (r *KanbanResourceModel) RefreshFromSharedBoard(ctx context.Context, resp *
 		r.Description = types.StringPointerValue(resp.Description)
 		r.ID = types.StringPointerValue(resp.ID)
 		r.OrgID = types.StringPointerValue(resp.OrgID)
-		r.Owners = make([]types.String, 0, len(resp.Owners))
-		for _, v := range resp.Owners {
-			r.Owners = append(r.Owners, types.StringValue(v))
+		if resp.Owners == nil {
+			r.Owners = jsontypes.NewNormalizedNull()
+		} else {
+			ownersResult, _ := json.Marshal(resp.Owners)
+			r.Owners = jsontypes.NewNormalizedValue(string(ownersResult))
 		}
-		r.SharedWith = make([]types.String, 0, len(resp.SharedWith))
-		for _, v := range resp.SharedWith {
-			r.SharedWith = append(r.SharedWith, types.StringValue(v))
+		if resp.SharedWith == nil {
+			r.SharedWith = jsontypes.NewNormalizedNull()
+		} else {
+			sharedWithResult, _ := json.Marshal(resp.SharedWith)
+			r.SharedWith = jsontypes.NewNormalizedValue(string(sharedWithResult))
 		}
 		r.SharedWithOrg = types.BoolPointerValue(resp.SharedWithOrg)
 		r.Title = types.StringPointerValue(resp.Title)
@@ -198,13 +202,13 @@ func (r *KanbanResourceModel) ToOperationsPatchKanbanBoardRequestBody(ctx contex
 	} else {
 		description = nil
 	}
-	owners := make([]string, 0, len(r.Owners))
-	for _, ownersItem := range r.Owners {
-		owners = append(owners, ownersItem.ValueString())
+	var owners interface{}
+	if !r.Owners.IsUnknown() && !r.Owners.IsNull() {
+		_ = json.Unmarshal([]byte(r.Owners.ValueString()), &owners)
 	}
-	sharedWith := make([]string, 0, len(r.SharedWith))
-	for _, sharedWithItem := range r.SharedWith {
-		sharedWith = append(sharedWith, sharedWithItem.ValueString())
+	var sharedWith interface{}
+	if !r.SharedWith.IsUnknown() && !r.SharedWith.IsNull() {
+		_ = json.Unmarshal([]byte(r.SharedWith.ValueString()), &sharedWith)
 	}
 	sharedWithOrg := new(bool)
 	if !r.SharedWithOrg.IsUnknown() && !r.SharedWithOrg.IsNull() {
@@ -413,13 +417,13 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 	} else {
 		orgID = nil
 	}
-	owners := make([]string, 0, len(r.Owners))
-	for _, ownersItem := range r.Owners {
-		owners = append(owners, ownersItem.ValueString())
+	var owners interface{}
+	if !r.Owners.IsUnknown() && !r.Owners.IsNull() {
+		_ = json.Unmarshal([]byte(r.Owners.ValueString()), &owners)
 	}
-	sharedWith := make([]string, 0, len(r.SharedWith))
-	for _, sharedWithItem := range r.SharedWith {
-		sharedWith = append(sharedWith, sharedWithItem.ValueString())
+	var sharedWith interface{}
+	if !r.SharedWith.IsUnknown() && !r.SharedWith.IsNull() {
+		_ = json.Unmarshal([]byte(r.SharedWith.ValueString()), &sharedWith)
 	}
 	sharedWithOrg := new(bool)
 	if !r.SharedWithOrg.IsUnknown() && !r.SharedWithOrg.IsNull() {

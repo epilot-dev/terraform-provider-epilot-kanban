@@ -46,17 +46,13 @@ resource "epilot-kanban_kanban" "my_kanban" {
       }
     ]
   }
-  created_at  = "2020-03-27T09:46:32.850Z"
-  created_by  = "...my_created_by..."
-  description = "Board description"
-  id          = "...my_id..."
-  org_id      = "...my_org_id..."
-  owners = [
-    "..."
-  ]
-  shared_with = [
-    "..."
-  ]
+  created_at      = "2020-03-27T09:46:32.850Z"
+  created_by      = "...my_created_by..."
+  description     = "Board description"
+  id              = "...my_id..."
+  org_id          = "...my_org_id..."
+  owners          = "{ \"see\": \"documentation\" }"
+  shared_with     = "{ \"see\": \"documentation\" }"
   shared_with_org = true
   title           = "Board 1"
   updated_at      = "2022-04-27T23:54:50.061Z"

@@ -45,8 +45,20 @@ actions:
   - target: $["paths"]["/v1/kanban/board/{boardId}"]["delete"]["parameters"][0]
     update:
       x-speakeasy-match: id
+  - target: $["paths"]["/v1/kanban/board/{boardId}"]["patch"]["requestBody"]["content"]["application/json"]["schema"]["properties"]["owners"]
+    update:
+      x-speakeasy-type-override: any
+  - target: $["paths"]["/v1/kanban/board/{boardId}"]["patch"]["requestBody"]["content"]["application/json"]["schema"]["properties"]["shared_with"]
+    update:
+      x-speakeasy-type-override: any
 
   - target: $["components"]["schemas"]["FilterItem"]
+    update:
+      x-speakeasy-type-override: any
+  - target: $["components"]["schemas"]["BoardSummary"]['properties']['owners']
+    update:
+      x-speakeasy-type-override: any
+  - target: $["components"]["schemas"]["BoardSummary"]['properties']['shared_with']
     update:
       x-speakeasy-type-override: any
 

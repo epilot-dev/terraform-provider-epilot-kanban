@@ -10,45 +10,45 @@ import (
 type PatchKanbanBoardRequestBody struct {
 	Description *string `json:"description,omitempty"`
 	// Array of user IDs who have full ownership rights for this board (view, edit, delete)
-	Owners        []string `json:"owners,omitempty"`
-	SharedWith    []string `json:"shared_with,omitempty"`
-	SharedWithOrg *bool    `json:"shared_with_org,omitempty"`
-	Title         *string  `json:"title,omitempty"`
+	Owners        any     `json:"owners,omitempty"`
+	SharedWith    any     `json:"shared_with,omitempty"`
+	SharedWithOrg *bool   `json:"shared_with_org,omitempty"`
+	Title         *string `json:"title,omitempty"`
 }
 
-func (o *PatchKanbanBoardRequestBody) GetDescription() *string {
-	if o == nil {
+func (p *PatchKanbanBoardRequestBody) GetDescription() *string {
+	if p == nil {
 		return nil
 	}
-	return o.Description
+	return p.Description
 }
 
-func (o *PatchKanbanBoardRequestBody) GetOwners() []string {
-	if o == nil {
+func (p *PatchKanbanBoardRequestBody) GetOwners() any {
+	if p == nil {
 		return nil
 	}
-	return o.Owners
+	return p.Owners
 }
 
-func (o *PatchKanbanBoardRequestBody) GetSharedWith() []string {
-	if o == nil {
+func (p *PatchKanbanBoardRequestBody) GetSharedWith() any {
+	if p == nil {
 		return nil
 	}
-	return o.SharedWith
+	return p.SharedWith
 }
 
-func (o *PatchKanbanBoardRequestBody) GetSharedWithOrg() *bool {
-	if o == nil {
+func (p *PatchKanbanBoardRequestBody) GetSharedWithOrg() *bool {
+	if p == nil {
 		return nil
 	}
-	return o.SharedWithOrg
+	return p.SharedWithOrg
 }
 
-func (o *PatchKanbanBoardRequestBody) GetTitle() *string {
-	if o == nil {
+func (p *PatchKanbanBoardRequestBody) GetTitle() *string {
+	if p == nil {
 		return nil
 	}
-	return o.Title
+	return p.Title
 }
 
 type PatchKanbanBoardRequest struct {
@@ -56,18 +56,18 @@ type PatchKanbanBoardRequest struct {
 	BoardID     string                       `pathParam:"style=simple,explode=false,name=boardId"`
 }
 
-func (o *PatchKanbanBoardRequest) GetRequestBody() *PatchKanbanBoardRequestBody {
-	if o == nil {
+func (p *PatchKanbanBoardRequest) GetRequestBody() *PatchKanbanBoardRequestBody {
+	if p == nil {
 		return nil
 	}
-	return o.RequestBody
+	return p.RequestBody
 }
 
-func (o *PatchKanbanBoardRequest) GetBoardID() string {
-	if o == nil {
+func (p *PatchKanbanBoardRequest) GetBoardID() string {
+	if p == nil {
 		return ""
 	}
-	return o.BoardID
+	return p.BoardID
 }
 
 type PatchKanbanBoardResponse struct {
@@ -81,30 +81,30 @@ type PatchKanbanBoardResponse struct {
 	RawResponse *http.Response
 }
 
-func (o *PatchKanbanBoardResponse) GetBoard() *shared.Board {
-	if o == nil {
+func (p *PatchKanbanBoardResponse) GetBoard() *shared.Board {
+	if p == nil {
 		return nil
 	}
-	return o.Board
+	return p.Board
 }
 
-func (o *PatchKanbanBoardResponse) GetContentType() string {
-	if o == nil {
+func (p *PatchKanbanBoardResponse) GetContentType() string {
+	if p == nil {
 		return ""
 	}
-	return o.ContentType
+	return p.ContentType
 }
 
-func (o *PatchKanbanBoardResponse) GetStatusCode() int {
-	if o == nil {
+func (p *PatchKanbanBoardResponse) GetStatusCode() int {
+	if p == nil {
 		return 0
 	}
-	return o.StatusCode
+	return p.StatusCode
 }
 
-func (o *PatchKanbanBoardResponse) GetRawResponse() *http.Response {
-	if o == nil {
+func (p *PatchKanbanBoardResponse) GetRawResponse() *http.Response {
+	if p == nil {
 		return nil
 	}
-	return o.RawResponse
+	return p.RawResponse
 }

@@ -14,8 +14,8 @@ type BoardSummary struct {
 	ID          *string    `json:"id,omitempty"`
 	OrgID       *string    `json:"org_id,omitempty"`
 	// Array of user IDs who have full ownership rights for this board (view, edit, delete)
-	Owners        []string   `json:"owners,omitempty"`
-	SharedWith    []string   `json:"shared_with,omitempty"`
+	Owners        any        `json:"owners,omitempty"`
+	SharedWith    any        `json:"shared_with,omitempty"`
 	SharedWithOrg *bool      `json:"shared_with_org,omitempty"`
 	Title         *string    `json:"title,omitempty"`
 	UpdatedAt     *time.Time `json:"updated_at,omitempty"`
@@ -33,79 +33,79 @@ func (b *BoardSummary) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (o *BoardSummary) GetCreatedAt() *time.Time {
-	if o == nil {
+func (b *BoardSummary) GetCreatedAt() *time.Time {
+	if b == nil {
 		return nil
 	}
-	return o.CreatedAt
+	return b.CreatedAt
 }
 
-func (o *BoardSummary) GetCreatedBy() *string {
-	if o == nil {
+func (b *BoardSummary) GetCreatedBy() *string {
+	if b == nil {
 		return nil
 	}
-	return o.CreatedBy
+	return b.CreatedBy
 }
 
-func (o *BoardSummary) GetDescription() *string {
-	if o == nil {
+func (b *BoardSummary) GetDescription() *string {
+	if b == nil {
 		return nil
 	}
-	return o.Description
+	return b.Description
 }
 
-func (o *BoardSummary) GetID() *string {
-	if o == nil {
+func (b *BoardSummary) GetID() *string {
+	if b == nil {
 		return nil
 	}
-	return o.ID
+	return b.ID
 }
 
-func (o *BoardSummary) GetOrgID() *string {
-	if o == nil {
+func (b *BoardSummary) GetOrgID() *string {
+	if b == nil {
 		return nil
 	}
-	return o.OrgID
+	return b.OrgID
 }
 
-func (o *BoardSummary) GetOwners() []string {
-	if o == nil {
+func (b *BoardSummary) GetOwners() any {
+	if b == nil {
 		return nil
 	}
-	return o.Owners
+	return b.Owners
 }
 
-func (o *BoardSummary) GetSharedWith() []string {
-	if o == nil {
+func (b *BoardSummary) GetSharedWith() any {
+	if b == nil {
 		return nil
 	}
-	return o.SharedWith
+	return b.SharedWith
 }
 
-func (o *BoardSummary) GetSharedWithOrg() *bool {
-	if o == nil {
+func (b *BoardSummary) GetSharedWithOrg() *bool {
+	if b == nil {
 		return nil
 	}
-	return o.SharedWithOrg
+	return b.SharedWithOrg
 }
 
-func (o *BoardSummary) GetTitle() *string {
-	if o == nil {
+func (b *BoardSummary) GetTitle() *string {
+	if b == nil {
 		return nil
 	}
-	return o.Title
+	return b.Title
 }
 
-func (o *BoardSummary) GetUpdatedAt() *time.Time {
-	if o == nil {
+func (b *BoardSummary) GetUpdatedAt() *time.Time {
+	if b == nil {
 		return nil
 	}
-	return o.UpdatedAt
+	return b.UpdatedAt
 }
 
-func (o *BoardSummary) GetUpdatedBy() *string {
-	if o == nil {
+func (b *BoardSummary) GetUpdatedBy() *string {
+	if b == nil {
 		return nil
 	}
-	return o.UpdatedBy
+	return b.UpdatedBy
 }

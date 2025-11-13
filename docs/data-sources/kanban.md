@@ -28,8 +28,8 @@ data "epilot-kanban_kanban" "my_kanban" {
 - `description` (String)
 - `id` (String) The ID of this resource.
 - `org_id` (String)
-- `owners` (List of String) Array of user IDs who have full ownership rights for this board (view, edit, delete)
-- `shared_with` (List of String)
+- `owners` (String) Array of user IDs who have full ownership rights for this board (view, edit, delete). Parsed as JSON.
+- `shared_with` (String) Parsed as JSON.
 - `shared_with_org` (Boolean)
 - `title` (String)
 - `updated_at` (String)
