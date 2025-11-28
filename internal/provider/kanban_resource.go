@@ -121,11 +121,9 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 									Attributes: map[string]schema.Attribute{
 										"any": schema.StringAttribute{
 											CustomType: jsontypes.NormalizedType{},
-											Computed:   true,
 											Optional:   true,
 											PlanModifiers: []planmodifier.String{
 												stringplanmodifier.RequiresReplaceIfConfigured(),
-												speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 											},
 											Description: `Requires replacement if changed.; Parsed as JSON.`,
 											Validators: []validator.String{
@@ -135,11 +133,9 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 											},
 										},
 										"filter_group": schema.SingleNestedAttribute{
-											Computed: true,
 											Optional: true,
 											PlanModifiers: []planmodifier.Object{
 												objectplanmodifier.RequiresReplaceIfConfigured(),
-												speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 											},
 											Attributes: map[string]schema.Attribute{
 												"combination": schema.StringAttribute{
@@ -147,7 +143,6 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 													Optional: true,
 													PlanModifiers: []planmodifier.String{
 														stringplanmodifier.RequiresReplaceIfConfigured(),
-														speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 													},
 													Description: `Not Null; must be one of ["AND", "OR"]; Requires replacement if changed.`,
 													Validators: []validator.String{
@@ -163,7 +158,6 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 													Optional: true,
 													PlanModifiers: []planmodifier.List{
 														listplanmodifier.RequiresReplaceIfConfigured(),
-														speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 													},
 													ElementType: jsontypes.NormalizedType{},
 													Description: `Not Null; Requires replacement if changed.`,
@@ -326,11 +320,9 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 												Attributes: map[string]schema.Attribute{
 													"any": schema.StringAttribute{
 														CustomType: jsontypes.NormalizedType{},
-														Computed:   true,
 														Optional:   true,
 														PlanModifiers: []planmodifier.String{
 															stringplanmodifier.RequiresReplaceIfConfigured(),
-															speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 														},
 														Description: `Requires replacement if changed.; Parsed as JSON.`,
 														Validators: []validator.String{
@@ -340,11 +332,9 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 														},
 													},
 													"filter_group": schema.SingleNestedAttribute{
-														Computed: true,
 														Optional: true,
 														PlanModifiers: []planmodifier.Object{
 															objectplanmodifier.RequiresReplaceIfConfigured(),
-															speakeasy_objectplanmodifier.SuppressDiff(speakeasy_objectplanmodifier.ExplicitSuppress),
 														},
 														Attributes: map[string]schema.Attribute{
 															"combination": schema.StringAttribute{
@@ -352,7 +342,6 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 																Optional: true,
 																PlanModifiers: []planmodifier.String{
 																	stringplanmodifier.RequiresReplaceIfConfigured(),
-																	speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 																},
 																Description: `Not Null; must be one of ["AND", "OR"]; Requires replacement if changed.`,
 																Validators: []validator.String{
@@ -368,7 +357,6 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 																Optional: true,
 																PlanModifiers: []planmodifier.List{
 																	listplanmodifier.RequiresReplaceIfConfigured(),
-																	speakeasy_listplanmodifier.SuppressDiff(speakeasy_listplanmodifier.ExplicitSuppress),
 																},
 																ElementType: jsontypes.NormalizedType{},
 																Description: `Not Null; Requires replacement if changed.`,
@@ -756,7 +744,10 @@ func (r *KanbanResource) Delete(ctx context.Context, req resource.DeleteRequest,
 		resp.Diagnostics.AddError("unexpected response from API", fmt.Sprintf("%v", res))
 		return
 	}
-	if res.StatusCode != 200 {
+	switch res.StatusCode {
+	case 200, 404:
+		break
+	default:
 		resp.Diagnostics.AddError(fmt.Sprintf("unexpected response from API. Got an unexpected response code %v", res.StatusCode), debugResponse(res.RawResponse))
 		return
 	}
