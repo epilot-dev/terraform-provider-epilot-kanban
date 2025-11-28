@@ -242,20 +242,20 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 		if r.Config.BoardFilter != nil {
 			combination := shared.Combination(r.Config.BoardFilter.Combination.ValueString())
 			items := make([]shared.Items, 0, len(r.Config.BoardFilter.Items))
-			for _, itemsItem := range r.Config.BoardFilter.Items {
-				if !itemsItem.Any.IsUnknown() && !itemsItem.Any.IsNull() {
+			for itemsItem := range r.Config.BoardFilter.Items {
+				if !r.Config.BoardFilter.Items[itemsItem].Any.IsUnknown() && !r.Config.BoardFilter.Items[itemsItem].Any.IsNull() {
 					var anyVar interface{}
-					_ = json.Unmarshal([]byte(itemsItem.Any.ValueString()), &anyVar)
+					_ = json.Unmarshal([]byte(r.Config.BoardFilter.Items[itemsItem].Any.ValueString()), &anyVar)
 					items = append(items, shared.Items{
 						Any: &anyVar,
 					})
 				}
-				if itemsItem.FilterGroup != nil {
-					combination1 := shared.FilterGroupCombination(itemsItem.FilterGroup.Combination.ValueString())
-					items1 := make([]interface{}, 0, len(itemsItem.FilterGroup.Items))
-					for _, itemsItem1 := range itemsItem.FilterGroup.Items {
+				if r.Config.BoardFilter.Items[itemsItem].FilterGroup != nil {
+					combination1 := shared.FilterGroupCombination(r.Config.BoardFilter.Items[itemsItem].FilterGroup.Combination.ValueString())
+					items1 := make([]interface{}, 0, len(r.Config.BoardFilter.Items[itemsItem].FilterGroup.Items))
+					for itemsIndex := range r.Config.BoardFilter.Items[itemsItem].FilterGroup.Items {
 						var itemsTmp interface{}
-						_ = json.Unmarshal([]byte(itemsItem1.ValueString()), &itemsTmp)
+						_ = json.Unmarshal([]byte(r.Config.BoardFilter.Items[itemsItem].FilterGroup.Items[itemsIndex].ValueString()), &itemsTmp)
 						items1 = append(items1, itemsTmp)
 					}
 					filterGroup := shared.FilterGroup{
@@ -275,8 +275,8 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 		var cardConfig *shared.CardConfig
 		if r.Config.CardConfig != nil {
 			fields := make([]string, 0, len(r.Config.CardConfig.Fields))
-			for _, fieldsItem := range r.Config.CardConfig.Fields {
-				fields = append(fields, fieldsItem.ValueString())
+			for fieldsIndex := range r.Config.CardConfig.Fields {
+				fields = append(fields, r.Config.CardConfig.Fields[fieldsIndex].ValueString())
 			}
 			cardConfig = &shared.CardConfig{
 				Fields: fields,
@@ -311,25 +311,25 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 			}
 		}
 		swimlanes := make([]shared.Swimlane, 0, len(r.Config.Swimlanes))
-		for _, swimlanesItem := range r.Config.Swimlanes {
+		for swimlanesIndex := range r.Config.Swimlanes {
 			var filter *shared.BoardFilter
-			if swimlanesItem.Filter != nil {
-				combination2 := shared.Combination(swimlanesItem.Filter.Combination.ValueString())
-				items2 := make([]shared.Items, 0, len(swimlanesItem.Filter.Items))
-				for _, itemsItem2 := range swimlanesItem.Filter.Items {
-					if !itemsItem2.Any.IsUnknown() && !itemsItem2.Any.IsNull() {
+			if r.Config.Swimlanes[swimlanesIndex].Filter != nil {
+				combination2 := shared.Combination(r.Config.Swimlanes[swimlanesIndex].Filter.Combination.ValueString())
+				items2 := make([]shared.Items, 0, len(r.Config.Swimlanes[swimlanesIndex].Filter.Items))
+				for itemsItem1 := range r.Config.Swimlanes[swimlanesIndex].Filter.Items {
+					if !r.Config.Swimlanes[swimlanesIndex].Filter.Items[itemsItem1].Any.IsUnknown() && !r.Config.Swimlanes[swimlanesIndex].Filter.Items[itemsItem1].Any.IsNull() {
 						var any1 interface{}
-						_ = json.Unmarshal([]byte(itemsItem2.Any.ValueString()), &any1)
+						_ = json.Unmarshal([]byte(r.Config.Swimlanes[swimlanesIndex].Filter.Items[itemsItem1].Any.ValueString()), &any1)
 						items2 = append(items2, shared.Items{
 							Any: &any1,
 						})
 					}
-					if itemsItem2.FilterGroup != nil {
-						combination3 := shared.FilterGroupCombination(itemsItem2.FilterGroup.Combination.ValueString())
-						items3 := make([]interface{}, 0, len(itemsItem2.FilterGroup.Items))
-						for _, itemsItem3 := range itemsItem2.FilterGroup.Items {
+					if r.Config.Swimlanes[swimlanesIndex].Filter.Items[itemsItem1].FilterGroup != nil {
+						combination3 := shared.FilterGroupCombination(r.Config.Swimlanes[swimlanesIndex].Filter.Items[itemsItem1].FilterGroup.Combination.ValueString())
+						items3 := make([]interface{}, 0, len(r.Config.Swimlanes[swimlanesIndex].Filter.Items[itemsItem1].FilterGroup.Items))
+						for itemsIndex1 := range r.Config.Swimlanes[swimlanesIndex].Filter.Items[itemsItem1].FilterGroup.Items {
 							var itemsTmp1 interface{}
-							_ = json.Unmarshal([]byte(itemsItem3.ValueString()), &itemsTmp1)
+							_ = json.Unmarshal([]byte(r.Config.Swimlanes[swimlanesIndex].Filter.Items[itemsItem1].FilterGroup.Items[itemsIndex1].ValueString()), &itemsTmp1)
 							items3 = append(items3, itemsTmp1)
 						}
 						filterGroup1 := shared.FilterGroup{
@@ -347,26 +347,26 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 				}
 			}
 			id := new(string)
-			if !swimlanesItem.ID.IsUnknown() && !swimlanesItem.ID.IsNull() {
-				*id = swimlanesItem.ID.ValueString()
+			if !r.Config.Swimlanes[swimlanesIndex].ID.IsUnknown() && !r.Config.Swimlanes[swimlanesIndex].ID.IsNull() {
+				*id = r.Config.Swimlanes[swimlanesIndex].ID.ValueString()
 			} else {
 				id = nil
 			}
 			position := new(float64)
-			if !swimlanesItem.Position.IsUnknown() && !swimlanesItem.Position.IsNull() {
-				*position = swimlanesItem.Position.ValueFloat64()
+			if !r.Config.Swimlanes[swimlanesIndex].Position.IsUnknown() && !r.Config.Swimlanes[swimlanesIndex].Position.IsNull() {
+				*position = r.Config.Swimlanes[swimlanesIndex].Position.ValueFloat64()
 			} else {
 				position = nil
 			}
 			title := new(string)
-			if !swimlanesItem.Title.IsUnknown() && !swimlanesItem.Title.IsNull() {
-				*title = swimlanesItem.Title.ValueString()
+			if !r.Config.Swimlanes[swimlanesIndex].Title.IsUnknown() && !r.Config.Swimlanes[swimlanesIndex].Title.IsNull() {
+				*title = r.Config.Swimlanes[swimlanesIndex].Title.ValueString()
 			} else {
 				title = nil
 			}
 			titleChipVariant := new(string)
-			if !swimlanesItem.TitleChipVariant.IsUnknown() && !swimlanesItem.TitleChipVariant.IsNull() {
-				*titleChipVariant = swimlanesItem.TitleChipVariant.ValueString()
+			if !r.Config.Swimlanes[swimlanesIndex].TitleChipVariant.IsUnknown() && !r.Config.Swimlanes[swimlanesIndex].TitleChipVariant.IsNull() {
+				*titleChipVariant = r.Config.Swimlanes[swimlanesIndex].TitleChipVariant.ValueString()
 			} else {
 				titleChipVariant = nil
 			}
