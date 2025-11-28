@@ -8,12 +8,9 @@ import (
 )
 
 type PatchKanbanBoardRequestBody struct {
-	Description *string `json:"description,omitempty"`
-	// Array of user IDs who have full ownership rights for this board (view, edit, delete)
-	Owners        []string `json:"owners,omitempty"`
-	SharedWith    []string `json:"shared_with,omitempty"`
-	SharedWithOrg *bool    `json:"shared_with_org,omitempty"`
-	Title         *string  `json:"title,omitempty"`
+	Description   *string `json:"description,omitempty"`
+	SharedWithOrg *bool   `json:"shared_with_org,omitempty"`
+	Title         *string `json:"title,omitempty"`
 }
 
 func (o *PatchKanbanBoardRequestBody) GetDescription() *string {
@@ -21,20 +18,6 @@ func (o *PatchKanbanBoardRequestBody) GetDescription() *string {
 		return nil
 	}
 	return o.Description
-}
-
-func (o *PatchKanbanBoardRequestBody) GetOwners() []string {
-	if o == nil {
-		return nil
-	}
-	return o.Owners
-}
-
-func (o *PatchKanbanBoardRequestBody) GetSharedWith() []string {
-	if o == nil {
-		return nil
-	}
-	return o.SharedWith
 }
 
 func (o *PatchKanbanBoardRequestBody) GetSharedWithOrg() *bool {

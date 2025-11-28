@@ -70,15 +70,12 @@ func (o *Config) GetSwimlanes() []Swimlane {
 }
 
 type Board struct {
-	Config      *Config    `json:"config,omitempty"`
-	CreatedAt   *time.Time `json:"created_at,omitempty"`
-	CreatedBy   *string    `json:"created_by,omitempty"`
-	Description *string    `json:"description,omitempty"`
-	ID          *string    `json:"id,omitempty"`
-	OrgID       *string    `json:"org_id,omitempty"`
-	// Array of user IDs who have full ownership rights for this board (view, edit, delete)
-	Owners        []string   `json:"owners,omitempty"`
-	SharedWith    []string   `json:"shared_with,omitempty"`
+	Config        *Config    `json:"config,omitempty"`
+	CreatedAt     *time.Time `json:"created_at,omitempty"`
+	CreatedBy     *string    `json:"created_by,omitempty"`
+	Description   *string    `json:"description,omitempty"`
+	ID            *string    `json:"id,omitempty"`
+	OrgID         *string    `json:"org_id,omitempty"`
 	SharedWithOrg *bool      `json:"shared_with_org,omitempty"`
 	Title         *string    `json:"title,omitempty"`
 	UpdatedAt     *time.Time `json:"updated_at,omitempty"`
@@ -136,20 +133,6 @@ func (o *Board) GetOrgID() *string {
 		return nil
 	}
 	return o.OrgID
-}
-
-func (o *Board) GetOwners() []string {
-	if o == nil {
-		return nil
-	}
-	return o.Owners
-}
-
-func (o *Board) GetSharedWith() []string {
-	if o == nil {
-		return nil
-	}
-	return o.SharedWith
 }
 
 func (o *Board) GetSharedWithOrg() *bool {

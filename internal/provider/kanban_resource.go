@@ -55,8 +55,6 @@ type KanbanResourceModel struct {
 	Description   types.String    `tfsdk:"description"`
 	ID            types.String    `tfsdk:"id"`
 	OrgID         types.String    `tfsdk:"org_id"`
-	Owners        []types.String  `tfsdk:"owners"`
-	SharedWith    []types.String  `tfsdk:"shared_with"`
 	SharedWithOrg types.Bool      `tfsdk:"shared_with_org"`
 	Title         types.String    `tfsdk:"title"`
 	UpdatedAt     types.String    `tfsdk:"updated_at"`
@@ -480,17 +478,6 @@ func (r *KanbanResource) Schema(ctx context.Context, req resource.SchemaRequest,
 					speakeasy_stringplanmodifier.SuppressDiff(speakeasy_stringplanmodifier.ExplicitSuppress),
 				},
 				Description: `Requires replacement if changed.`,
-			},
-			"owners": schema.ListAttribute{
-				Computed:    true,
-				Optional:    true,
-				ElementType: types.StringType,
-				Description: `Array of user IDs who have full ownership rights for this board (view, edit, delete)`,
-			},
-			"shared_with": schema.ListAttribute{
-				Computed:    true,
-				Optional:    true,
-				ElementType: types.StringType,
 			},
 			"shared_with_org": schema.BoolAttribute{
 				Computed: true,

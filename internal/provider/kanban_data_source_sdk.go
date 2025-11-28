@@ -124,14 +124,6 @@ func (r *KanbanDataSourceModel) RefreshFromSharedBoard(ctx context.Context, resp
 		r.Description = types.StringPointerValue(resp.Description)
 		r.ID = types.StringPointerValue(resp.ID)
 		r.OrgID = types.StringPointerValue(resp.OrgID)
-		r.Owners = make([]types.String, 0, len(resp.Owners))
-		for _, v := range resp.Owners {
-			r.Owners = append(r.Owners, types.StringValue(v))
-		}
-		r.SharedWith = make([]types.String, 0, len(resp.SharedWith))
-		for _, v := range resp.SharedWith {
-			r.SharedWith = append(r.SharedWith, types.StringValue(v))
-		}
 		r.SharedWithOrg = types.BoolPointerValue(resp.SharedWithOrg)
 		r.Title = types.StringPointerValue(resp.Title)
 		r.UpdatedAt = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.UpdatedAt))

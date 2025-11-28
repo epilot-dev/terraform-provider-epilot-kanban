@@ -52,3 +52,15 @@ actions:
 
   - target: $["components"]["schemas"]["Board"]["allOf"][1]["required"]
     remove: true
+
+  - target: $["components"]["schemas"]["BoardSummary"]["properties"]["owners"]
+    remove: true
+
+  - target: $["components"]["schemas"]["BoardSummary"]["properties"]["shared_with"]
+    remove: true
+
+  - target: $["paths"]["/v1/kanban/board/{boardId}"]["patch"]["requestBody"]["content"]["application/json"]["schema"]["properties"]["owners"]
+    remove: true
+
+  - target: $["paths"]["/v1/kanban/board/{boardId}"]["patch"]["requestBody"]["content"]["application/json"]["schema"]["properties"]["shared_with"]
+    remove: true

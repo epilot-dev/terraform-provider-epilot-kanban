@@ -125,14 +125,6 @@ func (r *KanbanResourceModel) RefreshFromSharedBoard(ctx context.Context, resp *
 		r.Description = types.StringPointerValue(resp.Description)
 		r.ID = types.StringPointerValue(resp.ID)
 		r.OrgID = types.StringPointerValue(resp.OrgID)
-		r.Owners = make([]types.String, 0, len(resp.Owners))
-		for _, v := range resp.Owners {
-			r.Owners = append(r.Owners, types.StringValue(v))
-		}
-		r.SharedWith = make([]types.String, 0, len(resp.SharedWith))
-		for _, v := range resp.SharedWith {
-			r.SharedWith = append(r.SharedWith, types.StringValue(v))
-		}
 		r.SharedWithOrg = types.BoolPointerValue(resp.SharedWithOrg)
 		r.Title = types.StringPointerValue(resp.Title)
 		r.UpdatedAt = types.StringPointerValue(typeconvert.TimePointerToStringPointer(resp.UpdatedAt))
@@ -198,14 +190,6 @@ func (r *KanbanResourceModel) ToOperationsPatchKanbanBoardRequestBody(ctx contex
 	} else {
 		description = nil
 	}
-	owners := make([]string, 0, len(r.Owners))
-	for _, ownersItem := range r.Owners {
-		owners = append(owners, ownersItem.ValueString())
-	}
-	sharedWith := make([]string, 0, len(r.SharedWith))
-	for _, sharedWithItem := range r.SharedWith {
-		sharedWith = append(sharedWith, sharedWithItem.ValueString())
-	}
 	sharedWithOrg := new(bool)
 	if !r.SharedWithOrg.IsUnknown() && !r.SharedWithOrg.IsNull() {
 		*sharedWithOrg = r.SharedWithOrg.ValueBool()
@@ -220,8 +204,6 @@ func (r *KanbanResourceModel) ToOperationsPatchKanbanBoardRequestBody(ctx contex
 	}
 	out := operations.PatchKanbanBoardRequestBody{
 		Description:   description,
-		Owners:        owners,
-		SharedWith:    sharedWith,
 		SharedWithOrg: sharedWithOrg,
 		Title:         title,
 	}
@@ -413,14 +395,6 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 	} else {
 		orgID = nil
 	}
-	owners := make([]string, 0, len(r.Owners))
-	for _, ownersItem := range r.Owners {
-		owners = append(owners, ownersItem.ValueString())
-	}
-	sharedWith := make([]string, 0, len(r.SharedWith))
-	for _, sharedWithItem := range r.SharedWith {
-		sharedWith = append(sharedWith, sharedWithItem.ValueString())
-	}
 	sharedWithOrg := new(bool)
 	if !r.SharedWithOrg.IsUnknown() && !r.SharedWithOrg.IsNull() {
 		*sharedWithOrg = r.SharedWithOrg.ValueBool()
@@ -452,8 +426,6 @@ func (r *KanbanResourceModel) ToSharedBoard(ctx context.Context) (*shared.Board,
 		Description:   description,
 		ID:            id1,
 		OrgID:         orgID,
-		Owners:        owners,
-		SharedWith:    sharedWith,
 		SharedWithOrg: sharedWithOrg,
 		Title:         title1,
 		UpdatedAt:     updatedAt,
